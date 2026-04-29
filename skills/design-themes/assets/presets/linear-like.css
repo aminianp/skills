@@ -1,0 +1,19 @@
+/* Linear-like — cool bluish neutrals, electric blue accent, sharp radii.
+ * Closest match for: "minimal", "technical", "developer-tool", "modern SaaS",
+ * "Linear", "Vercel", "Anthropic Console".
+ */
+@theme {
+  --color-bg: oklch(0.99 0.003 250);
+  --color-surface: oklch(1 0 0);
+  --color-fg: oklch(0.2 0.02 260);
+  --color-muted: oklch(0.55 0.02 260);
+  --color-border: oklch(0.93 0.01 260);
+  --color-primary: oklch(0.55 0.2 260);
+  --color-primary-fg: oklch(0.99 0 0);
+  --color-accent: oklch(0.6 0.2 260);
+
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+
+  --radius: 0.25rem;
+}

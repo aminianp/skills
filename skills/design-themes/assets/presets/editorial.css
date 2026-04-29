@@ -1,0 +1,20 @@
+/* Editorial — warm cream backgrounds, deep brown text, generous radii, serif.
+ * Closest match for: "warm", "publication", "long-form", "writing tool",
+ * "Substack", "Stripe Press", "Medium classic", "New Yorker".
+ */
+@theme {
+  --color-bg: oklch(0.98 0.01 80);
+  --color-surface: oklch(0.99 0.005 80);
+  --color-fg: oklch(0.2 0.02 40);
+  --color-muted: oklch(0.5 0.02 40);
+  --color-border: oklch(0.88 0.02 60);
+  --color-primary: oklch(0.38 0.14 30);
+  --color-primary-fg: oklch(0.99 0 0);
+  --color-accent: oklch(0.55 0.16 30);
+
+  --font-sans: "Charter", "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+  --font-display: "Charter", "Iowan Old Style", "Source Serif Pro", Georgia, serif;
+  --font-mono: "SF Mono", Menlo, Consolas, monospace;
+
+  --radius: 0.5rem;
+}

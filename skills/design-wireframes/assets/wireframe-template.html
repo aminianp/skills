@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{TITLE}</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">@import "/tokens.css";</style>
+</head>
+<body class="bg-bg text-fg font-sans antialiased min-h-screen">
+  <nav class="border-b border-border px-6 py-3 flex items-center justify-between text-sm">
+    <span class="text-muted">{FLOW_NAME} &middot; Step {STEP_N} of {STEP_TOTAL}</span>
+    <span class="space-x-3">
+      {PREV_LINK}
+      {NEXT_LINK}
+    </span>
+  </nav>
+
+  <main class="max-w-3xl mx-auto px-6 py-12">
+    {CONTENT}
+  </main>
+</body>
+</html>

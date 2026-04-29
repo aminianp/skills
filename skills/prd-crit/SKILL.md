@@ -72,7 +72,7 @@ Start by finding claims and assumptions in the content. A claim is any statement
 - Are the same terms used consistently throughout? (e.g., if the persona is "recruiter" in one section and "hiring manager" in another, flag it)
 
 ## Final Checks
-Everytime you are invoked, read through the entire content at least once and catch any issues as described in the PRD Critique sections above. Comment on the doc if you see these issues. 
+Every time you are invoked, read through the entire content at least once and catch any issues as described in the PRD Critique sections above. Comment on the doc if you see these issues.
 
 ## Output Format
 Once you're done with the review, always return a verdict in chat + a summary of your findings:

@@ -1,6 +1,6 @@
 ---
 name: map-cujs
-description: Convert high-level CUJs provided in chat or in a PRD to detailed flow maps. Work with the user to expand the generated flows into ones with happy paths and failure branches, then analyze them for optimization opportunities. Trigger when the user mentions CUJs, user flows, journey maps, or is preparing to hand off to design.
+description: Convert high-level CUJs provided in chat or in a PRD to detailed flow maps. Work with the user to expand the generated flows into ones with happy paths and failure branches, then analyze them for optimization opportunities. Trigger when the user mentions CUJs, user flows, journey maps, Mermaid diagrams for flows, or is preparing to hand off to design. Also trigger proactively when a PRD containing CUJs is approved and the next step is design handoff, or when the user is mapping out failure modes for a flow they've already sketched.
 metadata:
   tags:
     - "product skills"
@@ -21,7 +21,7 @@ Read high-level CUJs from a PRD (either linked in chat or provided as a file in 
 Present the generated flows to the user for review. Work with them to expand each flow with plausible failure branches:
 
 - Prompt the user to identify potential failure points in the flow
-- Ask for possible context switches between tools and/or window that could cause drop-off
+- Ask for possible context switches between tools and/or windows that could cause drop-off
 - For each failure point, ask the user to describe how the system should respond to recover from this failure state.
 
 Use this information to update the flow descriptions and Mermaid diagrams to include these branches. The goal is to create a comprehensive map of the user journey that accounts for both ideal and non-ideal scenarios.

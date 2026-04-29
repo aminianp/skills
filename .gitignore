@@ -1,0 +1,4 @@
+.DS_Store
+
+# Vendored skills installed via the ~/.claude/skills symlink — managed outside this repo
+skills/skill-creator/
