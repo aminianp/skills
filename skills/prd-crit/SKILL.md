@@ -53,6 +53,13 @@ Start by finding claims and assumptions in the content. A claim is any statement
 - Are JTBDs worded as outcomes the user wants, not solutions or features? (Bad: "User wants to click a button to export" / Good: "User wants their data in a format their finance team can use")
 - Are personas described specifically enough to be distinguishable from one another?
 - Is JTBD prioritization stated? If multiple JTBDs are listed with no priority signal, flag it.
+- **Does every JTBD have a corresponding CUJ in the document?** A JTBD without a CUJ is signaled intent without designed-for behavior — flag it as a coverage gap. The PM is committing to serve a job they haven't decided how to serve.
+
+### Critical User Journeys
+- **Is each CUJ explicitly anchored to a JTBD?** A CUJ that doesn't reference a specific JTBD is a UI walkthrough, not a journey. Look for: persona named, JTBD quoted or cited, trigger described, outcome stated. Steps that read like a click trail ("user clicks X, lands on Y") without naming what the user is trying to figure out or decide are a red flag.
+- Does each CUJ describe user intent (what they're trying to accomplish, decide, or walk away with), or just product mechanics?
+- Is the trigger realistic? CUJs that start with "user opens the app" rather than how the user actually arrived are a sign the journey hasn't been thought through.
+- Does the CUJ end with the JTBD being satisfied (or explicitly not), rather than just a final click?
 
 ### Product Proposal & Goals
 - Are non-goals explicitly stated? Flag their absence — unstated non-goals are a primary source of scope creep.
@@ -70,6 +77,7 @@ Start by finding claims and assumptions in the content. A claim is any statement
 - Does the product proposal address the stated problem, or an adjacent one?
 - Do non-goals contradict anything stated in the product proposal or user journeys?
 - Are the same terms used consistently throughout? (e.g., if the persona is "recruiter" in one section and "hiring manager" in another, flag it)
+- **Does each CUJ trace back to a specific JTBD, and does each JTBD have a CUJ?** Build the JTBD-to-CUJ map yourself; gaps in either direction are findings. JTBDs orphaned from CUJs are unfunded work; CUJs orphaned from JTBDs are user-value-untethered work.
 
 ## Final Checks
 Every time you are invoked, read through the entire content at least once and catch any issues as described in the PRD Critique sections above. Comment on the doc if you see these issues.

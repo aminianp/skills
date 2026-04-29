@@ -6,42 +6,84 @@
   <title>Prototype</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <style type="text/tailwindcss">@import "/tokens.css";</style>
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+    .layout { display: flex; flex: 1; min-height: 0; }
+    .layout > main { overflow-y: auto; }
+    section[id] { scroll-margin-top: 1rem; }
+  </style>
 </head>
-<body class="bg-bg text-fg font-sans antialiased min-h-screen">
-  <main class="max-w-3xl mx-auto px-6 py-12">
-    <header class="mb-8">
-      <h1 class="text-3xl font-semibold tracking-tight">Prototype</h1>
-      <p class="text-sm text-muted mt-1">Rapid-prototyping launcher. Links open in new tabs.</p>
-    </header>
-
-    <div class="rounded-md border border-border bg-surface px-4 py-3 mb-6 text-sm text-muted leading-relaxed">
-      No artifacts yet. Run <code class="px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-mono">/design-wireframes</code> to create wireframes, or drop files into <code class="px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-mono">prototype/wireframes/</code> &mdash; then run <code class="px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-mono">/prototype-update</code> to refresh this page.
+<body class="bg-bg text-fg font-sans antialiased">
+  <header class="border-b border-border px-6 py-3 flex items-center justify-between bg-surface shrink-0">
+    <div>
+      <h1 class="text-base font-semibold tracking-tight">Prototype</h1>
+      <p class="text-xs text-muted">Rapid-prototyping launcher &middot; links open in new tabs</p>
     </div>
+    <div class="text-xs text-muted text-right space-y-0.5">
+      <div>No artifacts indexed yet</div>
+      <div class="font-mono">localhost:3000</div>
+    </div>
+  </header>
 
-    <section class="border-t border-border py-5">
-      <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">PRD</h2>
-      <ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>
-    </section>
+  <div class="layout">
+    <aside class="w-52 shrink-0 border-r border-border bg-surface p-4">
+      <nav class="text-sm space-y-0.5">
+        <a href="#prd" class="flex items-center justify-between px-2 py-1.5 rounded hover:bg-border/30">
+          <span>PRD</span><span class="text-muted text-xs tabular-nums">0</span>
+        </a>
+        <a href="#cujs" class="flex items-center justify-between px-2 py-1.5 rounded hover:bg-border/30">
+          <span>CUJs</span><span class="text-muted text-xs tabular-nums">0</span>
+        </a>
+        <a href="#wireframes" class="flex items-center justify-between px-2 py-1.5 rounded hover:bg-border/30">
+          <span>Wireframes</span><span class="text-muted text-xs tabular-nums">0</span>
+        </a>
+        <a href="#styles" class="flex items-center justify-between px-2 py-1.5 rounded hover:bg-border/30">
+          <span>Styles</span><span class="text-muted text-xs tabular-nums">0</span>
+        </a>
+        <a href="#hi-fi" class="flex items-center justify-between px-2 py-1.5 rounded hover:bg-border/30">
+          <span>Hi-fi</span><span class="text-muted text-xs tabular-nums">0</span>
+        </a>
+      </nav>
+    </aside>
 
-    <section class="border-t border-border py-5">
-      <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">CUJs</h2>
-      <ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>
-    </section>
+    <main class="px-8 py-8">
+      <div class="max-w-2xl">
+        <div class="rounded-md border border-border bg-surface px-4 py-3 mb-8 text-sm text-muted leading-relaxed">
+          No artifacts yet. Run <code class="px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-mono">/design-wireframes</code> to create wireframes, or drop files into the artifact subdirectories &mdash; then run <code class="px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-mono">/prototype-update</code> to refresh this page.
+        </div>
 
-    <section class="border-t border-border py-5">
-      <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Wireframes</h2>
-      <ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>
-    </section>
+        <section id="prd" class="mb-10">
+          <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">PRD</h2>
+          <ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>
+        </section>
 
-    <section class="border-t border-border py-5">
-      <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Styles</h2>
-      <ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>
-    </section>
+        <section id="cujs" class="mb-10">
+          <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">CUJs</h2>
+          <ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>
+        </section>
 
-    <section class="border-t border-border py-5">
-      <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Hi-fi</h2>
-      <ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>
-    </section>
-  </main>
+        <section id="wireframes" class="mb-10">
+          <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Wireframes</h2>
+          <ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>
+        </section>
+
+        <section id="styles" class="mb-10">
+          <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Styles</h2>
+          <ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>
+        </section>
+
+        <section id="hi-fi" class="mb-10">
+          <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Hi-fi</h2>
+          <ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <footer class="border-t border-border px-6 py-2 text-xs text-muted flex items-center justify-between bg-surface shrink-0">
+    <div>Generated by <code class="font-mono">prototype-init</code></div>
+    <div>Stop server: <code class="px-1 py-0.5 rounded bg-border/40 text-fg font-mono">kill $(cat prototype/.server.pid)</code></div>
+  </footer>
 </body>
 </html>

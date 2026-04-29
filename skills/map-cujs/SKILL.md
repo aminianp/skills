@@ -12,10 +12,56 @@ metadata:
 
 # Map CUJs
 
-This skill runs in three stages with a required human review gate between them. The first stage expands CUJs into detailed flows and produces Mermaid diagrams. The second stage reviews the flows with the user and expand them into happy paths and failure branches. The third stage analyzes the expanded flows for optimization opportunities. Each stage requires explicit user approval to proceed to the next, as the expansions and optimizations involve judgment calls about product behavior that the user must confirm reflect reality.
+This skill runs in three stages with a required human review gate between them. The first stage expands CUJs into detailed flows and produces Mermaid diagrams. The second stage reviews the flows with the user and expands them into happy paths and failure branches. The third stage analyzes the expanded flows for optimization opportunities. Each stage requires explicit user approval to proceed to the next, as the expansions and optimizations involve judgment calls about product behavior that the user must confirm reflect reality.
+
+## What a CUJ Actually Is
+
+A CUJ describes how a specific persona accomplishes a specific Job To Be Done. It is **not** a forward pass through your product's UI. The most common failure of agent-generated CUJs is producing a click trail that looks like a journey but tells you nothing about whether the user got value.
+
+### Bad CUJ — a click trail
+> 1. User clicks Work in nav
+> 2. Lands on work page
+> 3. Scrolls through experience
+> 4. Clicks LinkedIn
+
+This is a UI walkthrough disguised as a journey. The user could complete every step and still not have accomplished anything meaningful.
+
+### Good CUJ — job-anchored
+> **JTBD:** Recruiter wants to assess if the candidate is a fit for the role they're hiring for, in under two minutes (PRD §2 P0).
+> **Persona:** Recruiter / hiring manager
+> **Trigger:** Recruiter is sourcing candidates for [role]; finds the candidate's name through LinkedIn / referral / search.
+>
+> **Steps:**
+> 1. Recruiter arrives at the site (direct or referral)
+> 2. Tries to identify quickly: who is this person, what's their domain
+> 3. Looks for evidence of fit — does experience match the role's requirements (years, scope, domain)?
+> 4. Forms a verdict: yes / no / maybe
+> 5. If yes/maybe: captures evidence (LinkedIn, resume) for further screening
+>
+> **Outcome:** Recruiter has a verdict and the evidence to act on it. Time elapsed: under 2 minutes.
+
+The Good version describes what the user is trying to figure out, decide, and walk away with. UI clicks are inferred from those goals — not the other way around.
+
+### Required for every CUJ
+
+- **Cite the JTBD by reference.** Quote or paraphrase the JTBD text, name the persona, and link to the PRD section/line where it's defined. If the PRD lists JTBDs without explicit links to CUJs, surface that mapping gap to the user (see "When the PRD lacks anchors" below).
+- **Trigger.** What made the user start this job? Without a trigger, you can't reason about realistic entry conditions or referrer/UTM context.
+- **Steps describe user intent**, not UI mechanics. "Looks for evidence of fit" is a step. "Clicks LinkedIn" is an action that may or may not happen depending on what the user finds.
+- **Outcome.** Did the JTBD get satisfied? An outcome statement closes the loop and gives Stage 2 (failure branches) something concrete to negate.
+
+### When the PRD lacks anchors
+
+Two common gaps:
+
+1. **A JTBD has no corresponding CUJ.** The PRD signals intent to serve a job but never describes how. Don't invent a CUJ to fill the hole — flag the coverage gap to the user. The fix is updating the PRD, not papering over it.
+2. **CUJs exist but don't reference JTBDs.** The mapping is implicit. Surface this as a critique: ask the user which JTBD each CUJ serves, and recommend they update the PRD to make the link explicit.
+
+Don't proceed to mapping until each CUJ you're going to draw has a JTBD anchor. CUJs without anchors drift away from user value within a single iteration.
 
 ## Step 1: Journey Mapping
-Read high-level CUJs from a PRD (either linked in chat or provided as a file in the project directory) and convert to flow maps with the happy path only. If no PRD is available, ask the user to describe the CUJ they want to map — in this case, work through one flow at a time. For example, a CUJ like "User wants to onboard to the product" is too high-level to map directly — it needs to be broken down into specific steps the user takes and how the system responds. The output of this stage is a set of flow descriptions and Mermaid diagrams that represent the happy path for each CUJ.
+Read high-level CUJs from a PRD (either linked in chat or provided as a file in the project directory). For each CUJ in the PRD, confirm its JTBD anchor (per "What a CUJ Actually Is" above) before drawing the flow. If the PRD's CUJ section is missing JTBD references, pause and surface the gap before continuing.
+
+Convert each anchored CUJ to a flow map with the happy path only. If no PRD is available, ask the user to describe the CUJ they want to map — but still require a JTBD and persona before drawing anything. Work through one flow at a time. The output of this stage is a set of flow descriptions and Mermaid diagrams that represent the happy path for each CUJ, with the JTBD/persona/trigger/outcome captured alongside the diagram.
 
 ## Step 2: Flow Expansion
 Present the generated flows to the user for review. Work with them to expand each flow with plausible failure branches:
