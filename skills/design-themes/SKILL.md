@@ -132,17 +132,20 @@ The script reads `prototype/tokens.css`, extracts the `@theme` block, walks ever
 
 After propagation, a browser refresh is sufficient. Tell them: "Refresh the prototype tab(s) to see the new theme." Don't run `prototype-update` — that regenerates the launcher's HTML structure, which hasn't changed (and the regenerator pulls from `tokens.css` itself, so it stays in sync independently).
 
-### Step 7 — Mark the theme approved (when the user signs off)
+### Step 7 — Mark the theme/style approved (when the user signs off)
 
-When the user commits to the theme ("let's go with this", "ship it", "I'm happy with this theme") &mdash; not just iterating ("warmer", "softer corners") &mdash; update the project's approval manifest at `prototype/APPROVED` so the toolchain has a complete picture of what's blessed. Add or update the `theme:` line:
+When the user commits to the theme ("let's go with this", "ship it", "I'm happy with this theme") &mdash; not just iterating ("warmer", "softer corners") &mdash; update the project's approval manifest at `prototype/APPROVED` with two related lines:
 
 ```
 theme: tokens.css
+styles: styles/<chosen-preset>.html
 ```
 
-This is largely symbolic since `tokens.css` is the active theme by virtue of being the only one, but recording it completes the manifest (PRD + prototype + theme all tracked) and makes the launcher's "✓ Approved" badge show consistently across categories. Run `prototype-update` afterward to refresh the launcher.
+`theme:` is largely symbolic since `tokens.css` is always the active theme &mdash; recording it completes the manifest. `styles:` points at the *style preview page* the user picked from the comparison set in `prototype/styles/` (e.g., `styles/cool-minimal.html`). The launcher uses `styles:` to render a "✓ Selected" pill on the matching preview card and a green check next to the Styles sidebar item, so progress is visible at a glance.
 
-If the user is mid-iteration, do *not* update the manifest &mdash; approval marks a decision, not work-in-progress.
+If you generated only one style preview (no comparison set), still write the `styles:` line pointing at that file. If the user explicitly skipped style previews entirely and went straight to a tokens.css edit, set only `theme:` and skip `styles:`.
+
+Run `prototype-update` afterward. If the user is mid-iteration, do *not* update the manifest &mdash; approval marks a decision, not work-in-progress.
 
 ## Iteration Mode
 

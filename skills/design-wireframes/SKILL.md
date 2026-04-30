@@ -119,6 +119,18 @@ python3 ~/.claude/skills/prototype-update/scripts/regenerate.py prototype/
 
 Direct them to refresh the prototype tab to see the new wireframes listed, and remind them they can run `design-themes` if they want to change the visual style — wireframes will re-theme on browser refresh.
 
+### Step 7 — Mark wireframes aligned (once the user signs off)
+
+When the user signals the wireframes look right ("these flows look good", "let's move on to hi-fi"), update the project's approval manifest at `prototype/APPROVED`:
+
+```
+wireframes: aligned
+```
+
+This is a group-level marker since wireframes are typically aligned as a set rather than individually &mdash; they're then superseded by the HiFi prototype. The launcher renders a small green check next to the Wireframes sidebar item so progress is visible at a glance. Run `prototype-update` afterward.
+
+If the user later asks for substantial wireframe changes (new screens, restructured flow), drop the line until they sign off again. Minor edits don't require unmarking.
+
 ## Iteration on Existing Wireframes
 
 If the user asks to modify a wireframe ("make the signup email screen tighter", "add a 'sign in instead' link"), read the existing file, apply the change, and rewrite. Don't regenerate from scratch — the user may have hand-tuned class choices or content.

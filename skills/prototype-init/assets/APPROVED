@@ -3,14 +3,25 @@
 # this file to know which versions are the source of truth.
 #
 # Categories used by the toolchain:
-#   prd:       the approved PRD (e.g., prd/site-prd.md)
-#   prototype: the approved interactive prototype (e.g., hi-fi/cool-minimal-v1.html)
-#   theme:     the approved theme tokens (typically tokens.css)
+#   prd:        the approved PRD (e.g., prd/site-prd.md)
+#   cujs:       set to "aligned" once CUJs are signed off
+#   styles:     the selected style preview (e.g., styles/cool-minimal.html)
+#   wireframes: set to "aligned" once wireframes are signed off
+#   prototype:  the selected interactive prototype (e.g., hi-fi/cool-minimal-v1.html)
+#   theme:      the active theme tokens file (typically tokens.css)
+#   components: set when extracted from the approved prototype
+#
+# Item-level matches render a "✓ Selected" pill on the matching card in the
+# launcher list view (prototypes, styles). Section/list keys also render a
+# small green check next to the section header / sidebar list label so the
+# user can see at a glance which categories have been aligned.
 #
 # Skills write into this file when the user signs off:
 #   prd-crit          → writes/updates `prd:` when PRD is marked Ready
+#   map-cujs          → writes/updates `cujs:` when CUJs are aligned
+#   design-themes     → writes/updates `styles:` and `theme:` when committed
+#   design-wireframes → writes/updates `wireframes:` when aligned
 #   design-prototypes → writes/updates `prototype:` when user picks "the one"
-#   design-themes     → writes/updates `theme:` when a theme is committed
-#   design-components → reads `prototype:` to know what to extract from
+#   design-components → reads `prototype:`; writes `components:` after extraction
 #
 # Add categories ad-hoc as needed; tools that don't recognize a key just ignore it.

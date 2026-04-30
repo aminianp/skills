@@ -171,3 +171,15 @@ For each CUJ:
 4. **Optimization score** — `Clean` / `Minor issues` / `Needs rework`
 
 The Type + Addressed-by tags on Stage 3 findings serve the same purpose they do in Stage 2: convert "things that could be optimized" into "routable work for `design-wireframes` / `design-themes` / `implementation-brief` / editorial." Without them, optimization output becomes a list someone has to re-route by hand.
+
+## Marking CUJs Aligned
+
+Once the user has signed off on all three stages (happy paths, failure modes, optimization findings) for every CUJ, update the project's approval manifest at `prototype/APPROVED`:
+
+```
+cujs: aligned
+```
+
+This is a group-level marker (not a path) since CUJs are typically aligned as a unit rather than individually. The launcher renders a small green check next to the CUJs section header so the user can see at a glance that the stage is done. After updating, run `prototype-update` to refresh the launcher.
+
+If the user revises the CUJs later (adds a new flow, changes a happy path), drop the line until they sign off again &mdash; the manifest reflects current state.

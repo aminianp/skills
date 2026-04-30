@@ -42,6 +42,7 @@ SIDEBAR_SECTIONS = [
     },
     {
         "label": "CUJs",
+        "approval_key": "cujs",
         "items": [
             {"kind": "auto", "dir": "cujs"},
         ],
@@ -49,10 +50,10 @@ SIDEBAR_SECTIONS = [
     {
         "label": "Design",
         "items": [
-            {"kind": "list", "label": "Styles", "dir": "styles", "item_mode": "inline"},
-            {"kind": "list", "label": "Wireframes", "dir": "wireframes", "item_mode": "newtab"},
-            {"kind": "list", "label": "Prototypes", "dir": "hi-fi", "item_mode": "newtab"},
-            {"kind": "list", "label": "Components", "dir": "components", "item_mode": "inline"},
+            {"kind": "list", "label": "Styles", "dir": "styles", "item_mode": "inline", "approval_key": "styles"},
+            {"kind": "list", "label": "Wireframes", "dir": "wireframes", "item_mode": "newtab", "approval_key": "wireframes"},
+            {"kind": "list", "label": "Prototypes", "dir": "hi-fi", "item_mode": "newtab", "approval_key": "prototype"},
+            {"kind": "list", "label": "Components", "dir": "components", "item_mode": "inline", "approval_key": "components"},
         ],
     },
 ]
@@ -131,17 +132,28 @@ def is_approved(href: str, approved: dict) -> bool:
     return False
 
 
-# Inline pill rendered inside sidebar items (compact: ✓ only).
+# Inline check rendered inside sidebar items (compact: ✓ only).
 APPROVED_PILL_INLINE = (
     ' <span class="ml-1 text-accent" title="Approved" aria-label="Approved">&#x2713;</span>'
 )
 
-# Larger pill rendered on list-view cards (✓ Approved).
+# Section-level alignment indicator (next to CUJs header, Styles / Wireframes /
+# Prototypes sidebar list items) — small green check, no text.
+SECTION_ALIGNED_CHECK = (
+    ' <span class="ml-1.5 text-accent" title="Aligned" aria-label="Aligned">&#x2713;</span>'
+)
+
+# Larger pill rendered on list-view cards (✓ Selected).
 APPROVED_PILL_CARD = (
     '<span class="ml-2 inline-flex items-center text-[10px] font-medium '
     'uppercase tracking-wider px-1.5 py-0.5 rounded-full border border-accent text-accent" '
-    'title="Approved">&#x2713;&nbsp;Approved</span>'
+    'title="Selected">&#x2713;&nbsp;Selected</span>'
 )
+
+
+def section_aligned(approval_key: str, approved: dict) -> bool:
+    """True if the section/list's approval_key has any entry in the manifest."""
+    return bool(approval_key) and approval_key in approved
 
 
 def extract_title(html_path: Path) -> str:
@@ -186,15 +198,17 @@ def sidebar_link(label: str, src: str, section: str, approved_flag: bool = False
     )
 
 
-def sidebar_list_link(label: str, list_id: str, count: int, section: str) -> str:
-    """Sidebar list (nav-list) link with count badge."""
+def sidebar_list_link(label: str, list_id: str, count: int, section: str, aligned: bool = False) -> str:
+    """Sidebar list (nav-list) link with count badge; check appears next to label when aligned."""
+    align_check = SECTION_ALIGNED_CHECK if aligned else ""
     return (
         f'          <li><a class="nav-list flex items-center justify-between px-2 py-1.5 rounded text-sm '
         f'cursor-pointer hover:bg-border/30" '
         f'data-list="{escape(list_id, quote=True)}" '
         f'data-section="{escape(section, quote=True)}" '
         f'data-label="{escape(label, quote=True)}">'
-        f'<span>{escape(label)}</span><span class="text-muted text-xs tabular-nums">{count}</span>'
+        f'<span class="inline-flex items-center">{escape(label)}{align_check}</span>'
+        f'<span class="text-muted text-xs tabular-nums">{count}</span>'
         f'</a></li>'
     )
 
@@ -228,15 +242,24 @@ def render_sidebar(prototype_dir: Path, approved: dict) -> tuple:
                     )
             elif kind == "list":
                 files = list_html_files(prototype_dir / item["dir"])
+                list_aligned = section_aligned(item.get("approval_key", ""), approved)
                 items_html.append(
-                    sidebar_list_link(item["label"], item["dir"], len(files), section_label)
+                    sidebar_list_link(
+                        item["label"], item["dir"], len(files), section_label,
+                        aligned=list_aligned,
+                    )
                 )
                 templates_html.append(render_list_template(item, files, approved))
 
+        section_check = (
+            SECTION_ALIGNED_CHECK
+            if section_aligned(section.get("approval_key", ""), approved)
+            else ""
+        )
         sections_html.append(
             f'      <div class="mb-6">\n'
             f'        <h3 class="text-xs font-semibold uppercase tracking-wider text-muted pb-1.5 mb-2 border-b border-border">'
-            f'{escape(section_label)}</h3>\n'
+            f'{escape(section_label)}{section_check}</h3>\n'
             f'        <ul class="space-y-0.5">\n'
             + "\n".join(items_html) + "\n"
             f'        </ul>\n'

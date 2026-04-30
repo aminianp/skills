@@ -171,7 +171,7 @@ Add or update the `prototype:` line with the relative path:
 prototype: hi-fi/cool-minimal-v1.html
 ```
 
-Only one prototype is approved at a time &mdash; replacing the line replaces the approval. After updating, run `prototype-update` so the launcher renders a "✓ Approved" pill next to the matching item in the Prototypes list.
+Only one prototype is approved at a time &mdash; replacing the line replaces the approval. After updating, run `prototype-update` so the launcher renders a "✓ Selected" pill next to the matching item in the Prototypes list (and a green check next to the Prototypes sidebar label).
 
 Approving a prototype implicitly approves the components inside it, the theme it uses, and the flows it embodies. Downstream skills can rely on this transitively without asking again. If the user later switches their pick, just rewrite the line; if they un-pick everything for a moment, remove the line.
 
