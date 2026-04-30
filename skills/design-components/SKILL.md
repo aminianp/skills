@@ -74,6 +74,25 @@ Common components extracted from a typical site prototype:
 
 Err on the side of extracting. It's cheaper to delete a component nobody uses than to leave duplicated markup that drifts.
 
+## Document Responsive Behavior (When It Changes)
+
+For web-target components whose layout **actually changes at a breakpoint** &mdash; a nav row that hides items below `sm`, a two-column grid that collapses to one, a hero that stacks vertically, a heading that scales down &mdash; add a `Responsive` section to the component page describing the change. Include the breakpoint, what shifts, and a code snippet showing the responsive class string.
+
+For components that render the same at every viewport (a button, a tag pill, a single-letter logo tile, an icon link) &mdash; **don't** add a `Responsive` section. Padding it onto every component is noise. Reserve the section for actual breakpoint behavior.
+
+Common shape:
+
+```html
+<section>
+  <h2>Responsive</h2>
+  <p>Below the <code>sm</code> breakpoint (640px), the row stacks vertically...</p>
+  <pre><code>... escaped class string showing the responsive prefixes ...</code></pre>
+  <p>Rationale: at phone widths there's no room for ...</p>
+</section>
+```
+
+Place this section after `Variants` / `States` and before `Tokens`. The pattern is "show what changes, then say why." Engineering uses it to avoid re-deriving breakpoints when translating to production code.
+
 ## Component Page Structure
 
 Each component HTML follows this shape:

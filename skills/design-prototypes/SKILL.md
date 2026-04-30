@@ -106,6 +106,27 @@ Each prototype HTML follows this shape:
 - **Default**: bare URL (no hash) routes to `#/home`. Bad/missing routes fall back to home rather than showing a blank page.
 - **In-prototype links** use the hash format (`href="#/work"`) so the JS can intercept them. External links (off-site) use real `href` and may use `target="_blank"`.
 
+## Web Targets Must Be Responsive
+
+If `target:` is `web-spa` (default) or any web target, the prototype **must** work at mobile, tablet, and desktop widths &mdash; not as an afterthought, as the default. Most web traffic is mobile; a desktop-only prototype masks layout problems until production.
+
+Use Tailwind's responsive prefixes (`sm:` 640px, `md:` 768px, `lg:` 1024px, `xl:` 1280px). Default classes describe the **mobile** layout; responsive prefixes upgrade it for larger screens. The patterns that recur on every project:
+
+- Container padding tightens on phones: `class="px-4 sm:px-6"`
+- Section vertical padding halves on phones: `class="py-10 sm:py-20"`
+- Heroes stack: `class="flex flex-col sm:flex-row gap-6 sm:gap-12 items-start"` with the photo / illustration shrinking too (`w-24 h-24 sm:w-40 sm:h-40`)
+- Headings shrink: `class="text-3xl sm:text-5xl leading-tight sm:leading-[1.05]"`
+- Two-column lists collapse: `class="grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-1 sm:gap-6"`
+- Secondary nav (social icons, separators) hide below sm: `class="hidden sm:flex"`
+- Footers stack: `class="flex flex-col sm:flex-row gap-4 sm:gap-0"`
+- Buttons wrap: `class="flex flex-wrap gap-3"`
+
+Validate by resizing the browser to ~390px (iPhone) and ~768px (iPad). If anything overflows, crashes, or stacks awkwardly, fix it before calling the prototype done.
+
+When components encapsulate responsive behavior, document it explicitly in the component file (see `design-components` for the convention) so engineering doesn't have to re-derive the breakpoints.
+
+For non-web targets (phone-ios, watch, terminal, etc.), the frame template owns the device-shape concern; the inner content renders inside a fixed-width device frame and doesn't need responsive prefixes.
+
 ## Render Target
 
 Every project's manifest carries a `target:` field that names the form factor the prototype is meant to render in (`web-spa`, `phone-ios`, `phone-android`, `watch-watchos`, `watch-wear-os`, `tablet-ipados`, `desktop-macos`, `desktop-windows`, `tv-tvos`, `tv-android-tv`, `xr-visionos`, `xr-horizon`, `auto-carplay`, `auto-android-auto`, `terminal`). Default is `web-spa` (no device frame).

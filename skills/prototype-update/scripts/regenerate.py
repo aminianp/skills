@@ -54,7 +54,15 @@ SIDEBAR_SECTIONS = [
             {"kind": "list", "label": "Wireframes", "dir": "wireframes", "item_mode": "newtab", "approval_key": "wireframes"},
             {"kind": "list", "label": "Prototypes", "dir": "hi-fi", "item_mode": "newtab", "approval_key": "prototype"},
             {"kind": "list", "label": "Components", "dir": "components", "item_mode": "inline", "approval_key": "components"},
-            {"kind": "list", "label": "Frames", "dir": "frames", "item_mode": "inline", "approval_key": "frames"},
+        ],
+    },
+    {
+        # Reference materials the agent reads but doesn't iterate on. No
+        # alignment indicators — these aren't artifacts the project owns,
+        # they're guidance the toolchain consults.
+        "label": "Reference",
+        "items": [
+            {"kind": "list", "label": "Design References", "dir": "frames", "item_mode": "inline"},
         ],
     },
 ]

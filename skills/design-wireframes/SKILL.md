@@ -115,6 +115,25 @@ python3 ~/.claude/skills/prototype-update/scripts/regenerate.py prototype/
 
 (Adjust the path if the user's skills directory lives elsewhere.)
 
+### Step 5a — Web targets must be responsive
+
+If `target:` is `web-spa` (default) or any web target, the wireframe **must** work at mobile, tablet, and desktop widths. This is non-negotiable. Most web traffic is mobile; a desktop-only prototype hides the hardest layout problems until production.
+
+Use Tailwind's responsive prefixes (`sm:` 640px, `md:` 768px, `lg:` 1024px, `xl:` 1280px). Default styles describe the *mobile* layout; responsive prefixes upgrade for larger screens. Common patterns:
+
+- **Container padding**: `class="max-w-5xl mx-auto px-4 sm:px-6"` &mdash; tighter on phones.
+- **Section padding**: `class="py-10 sm:py-20"` &mdash; halve vertical rhythm on mobile.
+- **Hero stacks vertically**: `class="flex flex-col sm:flex-row gap-6 sm:gap-12"`.
+- **Heading sizes**: `class="text-3xl sm:text-5xl leading-tight sm:leading-[1.05]"` &mdash; mobile gets a smaller, looser-leading version.
+- **Two-column lists collapse**: `class="grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-1 sm:gap-6"` &mdash; date on its own line above the title on mobile.
+- **Secondary nav items hide**: `class="hidden sm:flex"` on social-icon rows etc., so primary nav stays uncluttered on phones.
+- **Footers stack**: `class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-0"`.
+- **Buttons wrap**: `class="flex flex-wrap gap-3"` so CTAs don't overflow when the viewport narrows.
+
+Validate by resizing the browser to ~390px wide (iPhone) and ~768px (iPad). If anything overflows, crashes, or stacks awkwardly, fix it before declaring the wireframe done.
+
+For non-web targets (phone-ios, watch, etc.), the frame template handles "what device shape is this" &mdash; you don't need responsive prefixes on the inner content because it's rendering inside a fixed-width device frame.
+
 ### Step 5b — Frame the wireframe to the target form factor
 
 Read `target:` from `prototype/APPROVED`. If it's anything other than `web-spa`, wrap the wireframe content inside the matching frame from `prototype/frames/<target>.html` &mdash; phone shape, watch face, terminal window, etc. The wireframe page should still render standalone in a browser; the frame is part of its markup, not an iframe.
