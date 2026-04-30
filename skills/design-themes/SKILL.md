@@ -132,6 +132,18 @@ The script reads `prototype/tokens.css`, extracts the `@theme` block, walks ever
 
 After propagation, a browser refresh is sufficient. Tell them: "Refresh the prototype tab(s) to see the new theme." Don't run `prototype-update` — that regenerates the launcher's HTML structure, which hasn't changed (and the regenerator pulls from `tokens.css` itself, so it stays in sync independently).
 
+### Step 7 — Mark the theme approved (when the user signs off)
+
+When the user commits to the theme ("let's go with this", "ship it", "I'm happy with this theme") &mdash; not just iterating ("warmer", "softer corners") &mdash; update the project's approval manifest at `prototype/APPROVED` so the toolchain has a complete picture of what's blessed. Add or update the `theme:` line:
+
+```
+theme: tokens.css
+```
+
+This is largely symbolic since `tokens.css` is the active theme by virtue of being the only one, but recording it completes the manifest (PRD + prototype + theme all tracked) and makes the launcher's "✓ Approved" badge show consistently across categories. Run `prototype-update` afterward to refresh the launcher.
+
+If the user is mid-iteration, do *not* update the manifest &mdash; approval marks a decision, not work-in-progress.
+
 ## Iteration Mode
 
 If `prototype/tokens.css` already exists with custom values (not just the default monochrome), assume iteration. Read the current file, ask the user what should change, then rewrite — don't re-run the full elicitation.

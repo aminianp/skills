@@ -75,8 +75,11 @@ Run `test -d prototype/`. If it exists, ask the user whether to keep it (stop he
 From this skill's `assets/` directory into the user's project:
 - `assets/index.html` → `prototype/index.html`
 - `assets/tokens.css` → `prototype/tokens.css`
+- `assets/APPROVED` → `prototype/APPROVED`
 
 Then create the empty artifact subdirectories: `prototype/{prd,cujs,wireframes,styles,hi-fi,components}/`.
+
+The `APPROVED` file is the project's approval manifest. It lists which artifact in each category is the source of truth (approved PRD, approved prototype, approved theme, etc.). Format: `category: relative-path`, one per line, comments allowed with `#`. Initially empty &mdash; downstream skills (`prd-crit`, `design-prototypes`, `design-themes`) write into it as the user signs off on each artifact, and the launcher's `regenerate.py` reads it to render "✓ Approved" badges next to matching items in the sidebar.
 
 The default `tokens.css` ships a neutral monochrome theme so wireframes look reasonable on first run. The `design-themes` skill replaces this file with a custom theme later.
 

@@ -89,6 +89,61 @@ def read_theme_block(prototype_dir: Path) -> str:
     return DEFAULT_THEME
 
 
+def read_approved(prototype_dir: Path) -> dict:
+    """Read prototype/APPROVED. Returns {category: relative_path}, empty if missing.
+
+    Format: one `category: path` per line; '#' starts a comment; blank lines OK.
+    """
+    path = prototype_dir / "APPROVED"
+    if not path.exists():
+        return {}
+    try:
+        text = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return {}
+    approved: dict = {}
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        if ":" not in line:
+            continue
+        category, value = line.split(":", 1)
+        category, value = category.strip(), value.strip()
+        if category and value:
+            approved[category] = value
+    return approved
+
+
+def is_approved(href: str, approved: dict) -> bool:
+    """Match a launcher href against any approved manifest value.
+
+    Compares with extension stripped so that a PRD whose source is `prd/site-prd.md`
+    matches the launcher link to the rendered `prd/site-prd.html`.
+    """
+    if not approved or not href:
+        return False
+    href_norm = href.rsplit(".", 1)[0]
+    for value in approved.values():
+        value_norm = value.rsplit(".", 1)[0]
+        if href_norm == value_norm:
+            return True
+    return False
+
+
+# Inline pill rendered inside sidebar items (compact: ✓ only).
+APPROVED_PILL_INLINE = (
+    ' <span class="ml-1 text-accent" title="Approved" aria-label="Approved">&#x2713;</span>'
+)
+
+# Larger pill rendered on list-view cards (✓ Approved).
+APPROVED_PILL_CARD = (
+    '<span class="ml-2 inline-flex items-center text-[10px] font-medium '
+    'uppercase tracking-wider px-1.5 py-0.5 rounded-full border border-accent text-accent" '
+    'title="Approved">&#x2713;&nbsp;Approved</span>'
+)
+
+
 def extract_title(html_path: Path) -> str:
     """Read <title> from an HTML file; fall back to filename stem.
 
@@ -119,14 +174,15 @@ def list_html_files(directory: Path) -> list[tuple[str, str]]:
     return [(extract_title(p), f"{directory.name}/{p.name}") for p in files]
 
 
-def sidebar_link(label: str, src: str, section: str) -> str:
-    """Sidebar inline (nav-page) link."""
+def sidebar_link(label: str, src: str, section: str, approved_flag: bool = False) -> str:
+    """Sidebar inline (nav-page) link, optionally badged with the approval check."""
+    badge = APPROVED_PILL_INLINE if approved_flag else ""
     return (
         f'          <li><a class="nav-page block px-2 py-1.5 rounded text-sm '
         f'cursor-pointer hover:bg-border/30" '
         f'data-src="{escape(src, quote=True)}" '
         f'data-section="{escape(section, quote=True)}" '
-        f'data-label="{escape(label, quote=True)}">{escape(label)}</a></li>'
+        f'data-label="{escape(label, quote=True)}">{escape(label)}{badge}</a></li>'
     )
 
 
@@ -143,18 +199,23 @@ def sidebar_list_link(label: str, list_id: str, count: int, section: str) -> str
     )
 
 
-def render_sidebar(prototype_dir: Path) -> tuple[str, str]:
-    """Return (sidebar_html, list_templates_html)."""
-    sections_html: list[str] = []
-    templates_html: list[str] = []
+def render_sidebar(prototype_dir: Path, approved: dict) -> tuple:
+    """Return (sidebar_html, list_templates_html). Badges items found in `approved`."""
+    sections_html: list = []
+    templates_html: list = []
 
     for section in SIDEBAR_SECTIONS:
         section_label = section["label"]
-        items_html: list[str] = []
+        items_html: list = []
         for item in section["items"]:
             kind = item["kind"]
             if kind == "page":
-                items_html.append(sidebar_link(item["label"], item["src"], section_label))
+                items_html.append(
+                    sidebar_link(
+                        item["label"], item["src"], section_label,
+                        approved_flag=is_approved(item["src"], approved),
+                    )
+                )
             elif kind == "auto":
                 files = list_html_files(prototype_dir / item["dir"])
                 if not files:
@@ -162,13 +223,15 @@ def render_sidebar(prototype_dir: Path) -> tuple[str, str]:
                         '          <li class="px-2 py-1.5 text-sm text-muted italic">&mdash; none &mdash;</li>'
                     )
                 for name, href in files:
-                    items_html.append(sidebar_link(name, href, section_label))
+                    items_html.append(
+                        sidebar_link(name, href, section_label, approved_flag=is_approved(href, approved))
+                    )
             elif kind == "list":
                 files = list_html_files(prototype_dir / item["dir"])
                 items_html.append(
                     sidebar_list_link(item["label"], item["dir"], len(files), section_label)
                 )
-                templates_html.append(render_list_template(item, files))
+                templates_html.append(render_list_template(item, files, approved))
 
         sections_html.append(
             f'      <div class="mb-6">\n'
@@ -183,11 +246,14 @@ def render_sidebar(prototype_dir: Path) -> tuple[str, str]:
     return "\n".join(sections_html), "\n".join(templates_html)
 
 
-def render_list_template(item: dict, files: list[tuple[str, str]]) -> str:
-    """Render a <template> element holding the item list for a Design container."""
+def render_list_template(item: dict, files: list, approved: dict) -> str:
+    """Render a <template> element holding the item list for a Design container.
+
+    Cards whose href matches an entry in the approved manifest get an "✓ Approved"
+    pill rendered next to the label.
+    """
     list_id = item["dir"]
     item_mode = item["item_mode"]
-    section_label = "Design"
     parent_label = item["label"]
 
     if not files:
@@ -195,21 +261,23 @@ def render_list_template(item: dict, files: list[tuple[str, str]]) -> str:
             '<p class="text-sm text-muted italic">&mdash; no items &mdash;</p>'
         )
     else:
-        lis: list[str] = []
+        lis: list = []
         for name, href in files:
+            badge = APPROVED_PILL_CARD if is_approved(href, approved) else ""
+            label_html = f'<span class="inline-flex items-center">{escape(name)}{badge}</span>'
             if item_mode == "newtab":
                 lis.append(
                     f'<li><a href="{escape(href, quote=True)}" target="_blank" rel="noopener" '
-                    f'class="block px-3 py-2 rounded border border-border bg-surface hover:border-accent hover:text-accent text-sm">'
-                    f'{escape(name)}</a></li>'
+                    f'class="flex items-center justify-between gap-2 px-3 py-2 rounded border border-border bg-surface hover:border-accent hover:text-accent text-sm">'
+                    f'{label_html}</a></li>'
                 )
             else:  # inline
                 lis.append(
-                    f'<li><a class="nav-page block px-3 py-2 rounded border border-border bg-surface '
+                    f'<li><a class="nav-page flex items-center justify-between gap-2 px-3 py-2 rounded border border-border bg-surface '
                     f'hover:border-accent hover:text-accent text-sm cursor-pointer" '
                     f'data-src="{escape(href, quote=True)}" '
                     f'data-section="{escape(parent_label, quote=True)}" '
-                    f'data-label="{escape(name, quote=True)}">{escape(name)}</a></li>'
+                    f'data-label="{escape(name, quote=True)}">{label_html}</a></li>'
                 )
         body = '<ul class="space-y-2">' + "".join(lis) + "</ul>"
 
@@ -264,7 +332,8 @@ def regenerate(prototype_dir: Path) -> None:
         sys.exit(f"prototype directory not found: {prototype_dir}")
 
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
-    sidebar_html, templates_html = render_sidebar(prototype_dir)
+    approved = read_approved(prototype_dir)
+    sidebar_html, templates_html = render_sidebar(prototype_dir, approved)
     theme_block = read_theme_block(prototype_dir)
 
     html = f"""<!DOCTYPE html>

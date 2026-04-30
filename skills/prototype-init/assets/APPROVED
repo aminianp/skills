@@ -1,0 +1,16 @@
+# Approved artifacts. One line per category. Paths are relative to prototype/.
+# Edit when an artifact's approval state changes; the launcher and skills read
+# this file to know which versions are the source of truth.
+#
+# Categories used by the toolchain:
+#   prd:       the approved PRD (e.g., prd/site-prd.md)
+#   prototype: the approved interactive prototype (e.g., hi-fi/cool-minimal-v1.html)
+#   theme:     the approved theme tokens (typically tokens.css)
+#
+# Skills write into this file when the user signs off:
+#   prd-crit          → writes/updates `prd:` when PRD is marked Ready
+#   design-prototypes → writes/updates `prototype:` when user picks "the one"
+#   design-themes     → writes/updates `theme:` when a theme is committed
+#   design-components → reads `prototype:` to know what to extract from
+#
+# Add categories ad-hoc as needed; tools that don't recognize a key just ignore it.

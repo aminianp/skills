@@ -48,5 +48,20 @@ If the user wants markdown PRD files rendered, that's a separate skill's job (a 
 ## Why This Is a Script, Not Inline Agent Work
 Regenerating the launcher is deterministic, runs every time a skill adds files, and benefits from being byte-identical across invocations. A bundled script gives downstream skills (`design-wireframes`, future style/hi-fi skills) a one-line shell command to call after they finish writing files — no agent reasoning required, no token spend, no drift in the launcher format.
 
-## Why No Manifest File
-An earlier version of this design used a `manifest.json` that every skill updated when adding artifacts. This created two problems: skills had to remember to update it (they sometimes wouldn't), and concurrent agents would conflict on the file. Filesystem rescanning at update time avoids both — the disk is the source of truth, and this script is the only thing that reads it.
+## Why No Artifact-Listing Manifest
+An earlier version of this design used a `manifest.json` that every skill updated when adding artifacts. This created two problems: skills had to remember to update it (they sometimes wouldn't), and concurrent agents would conflict on the file. Filesystem rescanning at update time avoids both — the disk is the source of truth for *what artifacts exist*, and this script is the only thing that reads it.
+
+## Approval Manifest (`prototype/APPROVED`)
+There *is* one tiny manifest file: `prototype/APPROVED`. It's a different concern from artifact listing — it tracks **which version is the approved one in each category** (PRD, prototype, theme, etc.). The launcher reads it and renders a small "✓ Approved" badge next to matching items in the sidebar so the user can see at a glance which artifact is the current source of truth.
+
+Format: one `category: relative-path` per line; `#` introduces a comment; blank lines OK. Example:
+
+```
+prd: prd/site-prd.md
+prototype: hi-fi/cool-minimal-v1.html
+theme: tokens.css
+```
+
+The script matches paths with extension flexibility — a manifest entry of `prd/site-prd.md` matches both the source markdown and the `prd/site-prd.html` renderer link in the launcher. Other skills (`prd-crit`, `design-prototypes`, `design-themes`) write into this file when the user signs off on an artifact. `regenerate.py` only reads it, so this skill never needs to mutate state — it just reflects the current approval state in the launcher.
+
+If `APPROVED` is missing, the launcher renders without badges (graceful degradation).

@@ -114,3 +114,17 @@ Once you're done with the review, always return a verdict in chat + a summary of
 5. **Recommendations** — specific, actionable improvements (not rewrites)
 
 If the file format supports commenting, leave your specific in-line comments with your findings and start it with **Agent Feedback**. If not, create an **Agent Feedback** section at the end of the document and list your feedback there.
+
+## Marking the PRD Approved
+
+When the user signals the PRD is ready to ship to design/engineering ("looks good", "let's lock this in", "PRD is ready", "I'm happy with it"), update the project's approval manifest at `prototype/APPROVED` so downstream skills and the launcher know which PRD is the source of truth.
+
+Add or update the `prd:` line with the relative path of the approved PRD source file:
+
+```
+prd: prd/site-prd.md
+```
+
+If the manifest doesn't exist yet, create it with the `prd:` line and a header comment (see `prototype-init`'s scaffold for the canonical format). After updating, run `prototype-update` so the launcher renders a "✓ Approved" badge next to the PRD in the sidebar.
+
+Approval is reversible &mdash; if the user later wants to revise the PRD, the file path stays the same (usually edited in place) but if they explicitly *unapprove* it ("hold on, let's not consider this final"), remove the line. The manifest reflects current state; downstream skills like `implementation-brief` should respect it.

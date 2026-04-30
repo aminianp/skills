@@ -160,3 +160,19 @@ When done, tell the user:
 - Whether you ran `prototype-update` (you should have)
 
 If the user has multiple prototypes, suggest opening them in adjacent tabs to compare directly.
+
+## Marking a Prototype Approved
+
+When the user picks a variant as the standard ("let's go with v1", "this is the one", "this is the approved direction"), update the project's approval manifest at `prototype/APPROVED` so downstream skills (especially `design-components`) and the launcher know which prototype is the source of truth.
+
+Add or update the `prototype:` line with the relative path:
+
+```
+prototype: hi-fi/cool-minimal-v1.html
+```
+
+Only one prototype is approved at a time &mdash; replacing the line replaces the approval. After updating, run `prototype-update` so the launcher renders a "✓ Approved" pill next to the matching item in the Prototypes list.
+
+Approving a prototype implicitly approves the components inside it, the theme it uses, and the flows it embodies. Downstream skills can rely on this transitively without asking again. If the user later switches their pick, just rewrite the line; if they un-pick everything for a moment, remove the line.
+
+Once a prototype is approved and any further edits land on the file referenced by the manifest, run `design-components` to keep the component library in sync &mdash; the prototype is the spec, components crystallize it, and they cannot drift.
