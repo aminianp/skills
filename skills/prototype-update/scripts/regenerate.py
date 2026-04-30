@@ -228,10 +228,12 @@ SPA_SCRIPT = """
         document.getElementById('page-frame').src = src;
         showView('page-view');
       }
-      function showList(listId) {
+      function showList(listId, section, label) {
         var template = document.getElementById('template-' + listId);
         var content = document.getElementById('list-content');
         content.innerHTML = template ? template.innerHTML : '<p class="text-muted">No items.</p>';
+        document.getElementById('list-section').textContent = section || '';
+        document.getElementById('list-label').textContent = label || '';
         showView('list-view');
       }
       document.body.addEventListener('click', function (e) {
@@ -241,7 +243,7 @@ SPA_SCRIPT = """
         if (link.classList.contains('nav-page')) {
           showPage(link.dataset.src);
         } else {
-          showList(link.dataset.list);
+          showList(link.dataset.list, link.dataset.section, link.dataset.label);
         }
       });
       document.getElementById('header-close').addEventListener('click', function (e) {
@@ -314,8 +316,16 @@ def regenerate(prototype_dir: Path) -> None:
         <iframe id="page-frame" src="" class="flex-1 w-full border-0"></iframe>
       </div>
 
-      <div id="list-view" hidden class="flex flex-col h-full min-h-0 overflow-y-auto">
-        <div class="px-8 py-8">
+      <div id="list-view" hidden class="flex flex-col h-full min-h-0">
+        <div class="border-b border-border px-6 py-2.5 flex items-center justify-between bg-surface text-sm shrink-0">
+          <div class="text-muted">
+            <span id="list-section">Section</span>
+            <span class="mx-1.5">/</span>
+            <span id="list-label" class="text-fg font-medium">Label</span>
+          </div>
+          <div class="text-xs text-muted">List</div>
+        </div>
+        <div class="flex-1 overflow-y-auto px-8 py-8">
           <div id="list-content" class="max-w-2xl"></div>
         </div>
       </div>
