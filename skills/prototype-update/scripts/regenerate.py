@@ -22,7 +22,7 @@ Default prototype_dir is ./prototype.
 import re
 import sys
 from datetime import datetime
-from html import escape
+from html import escape, unescape
 from pathlib import Path
 
 # Sidebar layout: three sections, each with items.
@@ -90,12 +90,17 @@ def read_theme_block(prototype_dir: Path) -> str:
 
 
 def extract_title(html_path: Path) -> str:
-    """Read <title> from an HTML file; fall back to filename stem."""
+    """Read <title> from an HTML file; fall back to filename stem.
+
+    HTML entities in the <title> (e.g., &amp;) are decoded to their literal
+    characters here. The rendering callsite re-encodes via html.escape so we
+    don't end up with &amp;amp; in the launcher.
+    """
     try:
         text = html_path.read_text(encoding="utf-8")
         match = TITLE_RE.search(text)
         if match:
-            title = match.group(1).strip()
+            title = unescape(match.group(1).strip())
             if title:
                 return title
     except (OSError, UnicodeDecodeError):
