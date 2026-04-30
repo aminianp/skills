@@ -217,19 +217,16 @@ SPA_SCRIPT = """
         ['welcome-view', 'page-view', 'list-view'].forEach(function (v) {
           document.getElementById(v).hidden = (v !== id);
         });
+        document.getElementById('header-close').hidden = (id === 'welcome-view');
       }
-      function showPage(src, section, label) {
+      function showPage(src) {
         document.getElementById('page-frame').src = src;
-        document.getElementById('page-section').textContent = section;
-        document.getElementById('page-label').textContent = label;
         showView('page-view');
       }
-      function showList(listId, section, label) {
+      function showList(listId) {
         var template = document.getElementById('template-' + listId);
         var content = document.getElementById('list-content');
         content.innerHTML = template ? template.innerHTML : '<p class="text-muted">No items.</p>';
-        document.getElementById('list-section').textContent = section;
-        document.getElementById('list-label').textContent = label;
         showView('list-view');
       }
       document.body.addEventListener('click', function (e) {
@@ -237,18 +234,14 @@ SPA_SCRIPT = """
         if (!link) return;
         e.preventDefault();
         if (link.classList.contains('nav-page')) {
-          showPage(link.dataset.src, link.dataset.section, link.dataset.label);
+          showPage(link.dataset.src);
         } else {
-          showList(link.dataset.list, link.dataset.section, link.dataset.label);
+          showList(link.dataset.list);
         }
       });
-      document.getElementById('back-from-page').addEventListener('click', function (e) {
+      document.getElementById('header-close').addEventListener('click', function (e) {
         e.preventDefault();
         document.getElementById('page-frame').src = '';
-        showView('welcome-view');
-      });
-      document.getElementById('back-from-list').addEventListener('click', function (e) {
-        e.preventDefault();
         showView('welcome-view');
       });
     })();
@@ -287,9 +280,12 @@ def regenerate(prototype_dir: Path) -> None:
       <h1 class="text-base font-semibold tracking-tight">Prototype</h1>
       <p class="text-xs text-muted">Pick something from the sidebar to view it inline. Wireframes / HiFi open in a new tab.</p>
     </div>
-    <div class="text-xs text-muted text-right space-y-0.5">
-      <div>Last updated {timestamp}</div>
-      <div class="font-mono">localhost:3000</div>
+    <div class="flex items-center gap-4">
+      <a id="header-close" hidden class="text-xs text-muted hover:text-accent cursor-pointer">Close &times;</a>
+      <div class="text-xs text-muted text-right space-y-0.5">
+        <div>Last updated {timestamp}</div>
+        <div class="font-mono">localhost:3000</div>
+      </div>
     </div>
   </header>
 
@@ -310,27 +306,11 @@ def regenerate(prototype_dir: Path) -> None:
       </div>
 
       <div id="page-view" hidden class="flex flex-col h-full min-h-0">
-        <div class="border-b border-border px-6 py-2 flex items-center justify-between bg-surface text-sm shrink-0">
-          <div class="text-muted">
-            <span id="page-section">Section</span>
-            <span class="mx-1.5">/</span>
-            <span id="page-label" class="text-fg font-medium">Label</span>
-          </div>
-          <a id="back-from-page" class="text-xs text-muted hover:text-accent cursor-pointer">Close &times;</a>
-        </div>
         <iframe id="page-frame" src="" class="flex-1 w-full border-0"></iframe>
       </div>
 
-      <div id="list-view" hidden class="flex flex-col h-full min-h-0">
-        <div class="border-b border-border px-6 py-2 flex items-center justify-between bg-surface text-sm shrink-0">
-          <div class="text-muted">
-            <span id="list-section">Section</span>
-            <span class="mx-1.5">/</span>
-            <span id="list-label" class="text-fg font-medium">Label</span>
-          </div>
-          <a id="back-from-list" class="text-xs text-muted hover:text-accent cursor-pointer">Close &times;</a>
-        </div>
-        <div class="overflow-y-auto px-8 py-8">
+      <div id="list-view" hidden class="flex flex-col h-full min-h-0 overflow-y-auto">
+        <div class="px-8 py-8">
           <div id="list-content" class="max-w-2xl"></div>
         </div>
       </div>

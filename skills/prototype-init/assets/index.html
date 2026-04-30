@@ -6,56 +6,137 @@
   <title>Prototype</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <style type="text/tailwindcss">
-    /* @theme:start — keep in sync with prototype/tokens.css */
+    /* @theme:start — synced from prototype/tokens.css */
     @theme {
-      --color-bg: oklch(0.99 0 0);
-      --color-surface: oklch(1 0 0);
-      --color-fg: oklch(0.18 0 0);
-      --color-muted: oklch(0.5 0 0);
-      --color-border: oklch(0.92 0 0);
-      --color-primary: oklch(0.28 0 0);
-      --color-primary-fg: oklch(0.99 0 0);
-      --color-accent: oklch(0.55 0 0);
-      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-      --font-mono: "SF Mono", Menlo, Consolas, monospace;
-      --radius: 0.375rem;
-    }
+  --color-bg: oklch(0.99 0 0);
+  --color-surface: oklch(1 0 0);
+  --color-fg: oklch(0.18 0 0);
+  --color-muted: oklch(0.5 0 0);
+  --color-border: oklch(0.92 0 0);
+  --color-primary: oklch(0.28 0 0);
+  --color-primary-fg: oklch(0.99 0 0);
+  --color-accent: oklch(0.55 0 0);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "SF Mono", Menlo, Consolas, monospace;
+  --radius: 0.375rem;
+}
     /* @theme:end */
   </style>
   <style>
     html, body { height: 100%; }
     body { display: flex; flex-direction: column; }
+    iframe { background: var(--color-bg); }
   </style>
 </head>
 <body class="bg-bg text-fg font-sans antialiased">
   <header class="border-b border-border px-6 py-3 flex items-center justify-between bg-surface shrink-0">
     <div>
       <h1 class="text-base font-semibold tracking-tight">Prototype</h1>
-      <p class="text-xs text-muted">Scaffold ready &middot; launcher not yet populated</p>
+      <p class="text-xs text-muted">Pick something from the sidebar to view it inline. Wireframes / HiFi open in a new tab.</p>
     </div>
-    <div class="text-xs text-muted text-right">
-      <div class="font-mono">localhost:3000</div>
+    <div class="flex items-center gap-4">
+      <a id="header-close" hidden class="text-xs text-muted hover:text-accent cursor-pointer">Close &times;</a>
+      <div class="text-xs text-muted text-right space-y-0.5">
+        <div>Last updated 2026-04-29 22:21</div>
+        <div class="font-mono">localhost:3000</div>
+      </div>
     </div>
   </header>
 
-  <main class="flex-1 overflow-y-auto px-8 py-12">
-    <div class="max-w-2xl mx-auto">
-      <div class="rounded-md border border-border bg-surface px-5 py-4">
-        <h2 class="text-lg font-semibold mb-2">Scaffold ready</h2>
-        <p class="text-sm text-muted leading-relaxed">
-          The <code class="px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-mono">prototype/</code> directory has been created.
-          Run <code class="px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-mono">/prototype-update</code> to scan the artifact subdirectories
-          (<code class="font-mono text-xs">prd/</code>, <code class="font-mono text-xs">cujs/</code>, <code class="font-mono text-xs">wireframes/</code>,
-          <code class="font-mono text-xs">styles/</code>, <code class="font-mono text-xs">hi-fi/</code>, <code class="font-mono text-xs">components/</code>)
-          and populate this launcher with a sidebar grouping artifacts by Product Definition, CUJs, and Design.
-        </p>
+  <div class="flex-1 flex min-h-0">
+    <aside class="w-56 shrink-0 border-r border-border bg-surface px-4 py-6 overflow-y-auto">
+      <div class="mb-6">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-muted pb-1.5 mb-2 border-b border-border">Product Definition</h3>
+        <ul class="space-y-0.5">
+          <li><a class="nav-page block px-2 py-1.5 rounded text-sm cursor-pointer hover:bg-border/30" data-src="prd/site-prd.html" data-section="Product Definition" data-label="PRD">PRD</a></li>
+          <li><a class="nav-page block px-2 py-1.5 rounded text-sm cursor-pointer hover:bg-border/30" data-src="prd/site-prd-faq.html" data-section="Product Definition" data-label="FAQ">FAQ</a></li>
+          <li><a class="nav-page block px-2 py-1.5 rounded text-sm cursor-pointer hover:bg-border/30" data-src="prd/site-prd-decision-log.html" data-section="Product Definition" data-label="Decision Log">Decision Log</a></li>
+        </ul>
       </div>
-    </div>
-  </main>
+      <div class="mb-6">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-muted pb-1.5 mb-2 border-b border-border">CUJs</h3>
+        <ul class="space-y-0.5">
+          <li class="px-2 py-1.5 text-sm text-muted italic">&mdash; none &mdash;</li>
+        </ul>
+      </div>
+      <div class="mb-6">
+        <h3 class="text-xs font-semibold uppercase tracking-wider text-muted pb-1.5 mb-2 border-b border-border">Design</h3>
+        <ul class="space-y-0.5">
+          <li><a class="nav-list flex items-center justify-between px-2 py-1.5 rounded text-sm cursor-pointer hover:bg-border/30" data-list="wireframes" data-section="Design" data-label="Wireframes"><span>Wireframes</span><span class="text-muted text-xs tabular-nums">0</span></a></li>
+          <li><a class="nav-list flex items-center justify-between px-2 py-1.5 rounded text-sm cursor-pointer hover:bg-border/30" data-list="styles" data-section="Design" data-label="Styles"><span>Styles</span><span class="text-muted text-xs tabular-nums">0</span></a></li>
+          <li><a class="nav-list flex items-center justify-between px-2 py-1.5 rounded text-sm cursor-pointer hover:bg-border/30" data-list="hi-fi" data-section="Design" data-label="HiFi"><span>HiFi</span><span class="text-muted text-xs tabular-nums">0</span></a></li>
+          <li><a class="nav-list flex items-center justify-between px-2 py-1.5 rounded text-sm cursor-pointer hover:bg-border/30" data-list="components" data-section="Design" data-label="Components"><span>Components</span><span class="text-muted text-xs tabular-nums">0</span></a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="flex-1 flex flex-col min-w-0 bg-bg">
+      <div id="welcome-view" class="px-8 py-12 max-w-2xl">
+        <h2 class="text-2xl font-semibold mb-3 tracking-tight">Welcome</h2>
+        <p class="text-muted leading-relaxed">Pick something from the sidebar.</p>
+        <ul class="mt-6 space-y-2 text-sm text-muted">
+          <li><strong class="text-fg">Product Definition</strong> &mdash; the PRD, its FAQ, and the decision log.</li>
+          <li><strong class="text-fg">CUJs</strong> &mdash; job-anchored user journeys with Mermaid flow diagrams.</li>
+          <li><strong class="text-fg">Design</strong> &mdash; wireframes and hi-fi prototypes (open in new tabs); style and component pages (open inline).</li>
+        </ul>
+      </div>
+
+      <div id="page-view" hidden class="flex flex-col h-full min-h-0">
+        <iframe id="page-frame" src="" class="flex-1 w-full border-0"></iframe>
+      </div>
+
+      <div id="list-view" hidden class="flex flex-col h-full min-h-0 overflow-y-auto">
+        <div class="px-8 py-8">
+          <div id="list-content" class="max-w-2xl"></div>
+        </div>
+      </div>
+
+    <template id="template-wireframes"><p class="text-sm text-muted italic">&mdash; no items &mdash;</p></template>
+    <template id="template-styles"><p class="text-sm text-muted italic">&mdash; no items &mdash;</p></template>
+    <template id="template-hi-fi"><p class="text-sm text-muted italic">&mdash; no items &mdash;</p></template>
+    <template id="template-components"><p class="text-sm text-muted italic">&mdash; no items &mdash;</p></template>
+    </main>
+  </div>
 
   <footer class="border-t border-border px-6 py-2 text-xs text-muted flex items-center justify-between bg-surface shrink-0">
-    <div>Generated by <code class="font-mono">prototype-init</code></div>
+    <div>Generated by <code class="font-mono">prototype-update</code></div>
     <div>Stop server: <code class="px-1 py-0.5 rounded bg-border/40 text-fg font-mono">kill $(cat prototype/.server.pid)</code></div>
   </footer>
+
+  <script>
+    (function () {
+      function showView(id) {
+        ['welcome-view', 'page-view', 'list-view'].forEach(function (v) {
+          document.getElementById(v).hidden = (v !== id);
+        });
+        document.getElementById('header-close').hidden = (id === 'welcome-view');
+      }
+      function showPage(src) {
+        document.getElementById('page-frame').src = src;
+        showView('page-view');
+      }
+      function showList(listId) {
+        var template = document.getElementById('template-' + listId);
+        var content = document.getElementById('list-content');
+        content.innerHTML = template ? template.innerHTML : '<p class="text-muted">No items.</p>';
+        showView('list-view');
+      }
+      document.body.addEventListener('click', function (e) {
+        var link = e.target.closest('.nav-page, .nav-list');
+        if (!link) return;
+        e.preventDefault();
+        if (link.classList.contains('nav-page')) {
+          showPage(link.dataset.src);
+        } else {
+          showList(link.dataset.list);
+        }
+      });
+      document.getElementById('header-close').addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('page-frame').src = '';
+        showView('welcome-view');
+      });
+    })();
+</script>
 </body>
 </html>
