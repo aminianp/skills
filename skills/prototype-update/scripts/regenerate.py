@@ -6,8 +6,8 @@ into three sections (Product Definition, CUJs, Design), and a main pane
 that switches between three views — a welcome message, a page (iframe),
 and a list (for design containers like Wireframes that hold multiple
 items). Clicks on sidebar items either render the artifact inline in the
-iframe or, for design containers like Wireframes/HiFi where each item is
-a full-page artifact, open the chosen item in a new tab.
+iframe or, for design containers like Wireframes/Prototypes where each
+item is a full-page artifact, open the chosen item in a new tab.
 
 The Tailwind v4 browser CDN does not resolve @import to external files
 inside its tagged style blocks, so we inline the @theme contents at
@@ -51,7 +51,7 @@ SIDEBAR_SECTIONS = [
         "items": [
             {"kind": "list", "label": "Styles", "dir": "styles", "item_mode": "inline"},
             {"kind": "list", "label": "Wireframes", "dir": "wireframes", "item_mode": "newtab"},
-            {"kind": "list", "label": "HiFi", "dir": "hi-fi", "item_mode": "newtab"},
+            {"kind": "list", "label": "Prototypes", "dir": "hi-fi", "item_mode": "newtab"},
             {"kind": "list", "label": "Components", "dir": "components", "item_mode": "inline"},
         ],
     },
@@ -289,7 +289,7 @@ def regenerate(prototype_dir: Path) -> None:
   <header class="border-b border-border px-6 py-3 flex items-center justify-between bg-surface shrink-0">
     <div>
       <h1 class="text-base font-semibold tracking-tight">Prototype</h1>
-      <p class="text-xs text-muted">Pick something from the sidebar to view it inline. Wireframes / HiFi open in a new tab.</p>
+      <p class="text-xs text-muted">Pick something from the sidebar to view it inline. Wireframes / Prototypes open in a new tab.</p>
     </div>
     <div class="flex items-center gap-4">
       <a id="header-close" hidden class="text-xs text-muted hover:text-accent cursor-pointer">Close &times;</a>
@@ -312,7 +312,7 @@ def regenerate(prototype_dir: Path) -> None:
         <ul class="mt-6 space-y-2 text-sm text-muted">
           <li><strong class="text-fg">Product Definition</strong> &mdash; the PRD, its FAQ, and the decision log.</li>
           <li><strong class="text-fg">CUJs</strong> &mdash; job-anchored user journeys with Mermaid flow diagrams.</li>
-          <li><strong class="text-fg">Design</strong> &mdash; wireframes and hi-fi prototypes (open in new tabs); style and component pages (open inline).</li>
+          <li><strong class="text-fg">Design</strong> &mdash; styles and components (open inline); wireframes and interactive prototypes (open in new tabs).</li>
         </ul>
       </div>
 

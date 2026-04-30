@@ -25,7 +25,7 @@ prototype/
 ├── cujs/            # CUJ flow pages (Mermaid + step text + JTBD anchor block)
 ├── wireframes/      # lofi wireframe pages (per-screen, opens in new tab from launcher)
 ├── styles/          # style-token preview pages (opens inline)
-├── hi-fi/           # hi-fi prototype pages (opens in new tab)
+├── hi-fi/           # interactive prototypes (one HTML per variant; opens in new tab from the "Prototypes" sidebar item)
 └── components/      # component library pages (opens inline)
 ```
 
@@ -35,7 +35,7 @@ The launcher (`index.html`) is **not** a generic file list. It's a single-page a
 
 - **Welcome view** — shown initially; brief intro to the three sidebar sections
 - **Page view** — iframe rendering an inline artifact (PRD, FAQ, CUJ, Style, Component)
-- **List view** — for design containers (Wireframes, Styles, HiFi, Components); shows the items inside one container, click opens (inline or new-tab depending on the container's mode)
+- **List view** — for design containers (Wireframes, Styles, Prototypes, Components); shows the items inside one container, click opens (inline or new-tab depending on the container's mode)
 
 The sidebar is grouped into three standard sections: **Product Definition**, **CUJs**, **Design**. These are the same across every project; only the items inside them change. A "Close ✕" appears in the launcher's top header whenever an artifact is loaded, so the user can always get back to the welcome view.
 
@@ -62,7 +62,7 @@ Every HTML file inlines its own copy of the `@theme` block between `/* @theme:st
 ### Inline-vs-newtab behavior
 
 - Product Definition + CUJs + Styles + Components → click opens **inline** (in the launcher's iframe)
-- Wireframes + HiFi → click opens in a **new tab** (full-page artifacts deserve full-tab focus)
+- Wireframes + Prototypes → click opens in a **new tab** (full-page artifacts deserve full-tab focus; interactive prototypes own their full viewport)
 
 This is configured per item in `SIDEBAR_SECTIONS` in `regenerate.py`.
 
