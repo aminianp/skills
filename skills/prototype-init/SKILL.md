@@ -19,25 +19,52 @@ If `prototype/` already exists, do not overwrite. Ask the user whether they want
 ## Scaffold Structure
 ```
 prototype/
-├── index.html       # landing page with grouped links to artifacts
-├── tokens.css       # @theme block — single source of truth for design tokens
-├── prd/             # PRD renders
-├── cujs/            # CUJ flow pages (Mermaid + step text)
-├── wireframes/      # lofi wireframe pages (one per screen)
-├── styles/          # style-token previews
-└── hi-fi/           # high-fidelity pages
+├── index.html       # SPA launcher: header, sidebar nav, main pane (welcome / iframe / list)
+├── tokens.css       # @theme block — human-readable source of truth for design tokens
+├── prd/             # Product Definition: PRD, FAQ, Decision Log (each as a markdown wrapper)
+├── cujs/            # CUJ flow pages (Mermaid + step text + JTBD anchor block)
+├── wireframes/      # lofi wireframe pages (per-screen, opens in new tab from launcher)
+├── styles/          # style-token preview pages (opens inline)
+├── hi-fi/           # hi-fi prototype pages (opens in new tab)
+└── components/      # component library pages (opens inline)
 ```
 
-All artifact links on the landing page use `target="_blank"` so artifacts open in new tabs. This gives CSS isolation for free (a wireframe's classes can't leak into the launcher chrome) and keeps the launcher stable across navigation.
+## Opinionated launcher
 
-Every HTML file in the scaffold pulls in Tailwind via the same two lines in `<head>`:
+The launcher (`index.html`) is **not** a generic file list. It's a single-page app shell with three views:
 
-```html
-<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-<style type="text/tailwindcss">@import "/tokens.css";</style>
+- **Welcome view** — shown initially; brief intro to the three sidebar sections
+- **Page view** — iframe rendering an inline artifact (PRD, FAQ, CUJ, Style, Component)
+- **List view** — for design containers (Wireframes, Styles, HiFi, Components); shows the items inside one container, click opens (inline or new-tab depending on the container's mode)
+
+The sidebar is grouped into three standard sections: **Product Definition**, **CUJs**, **Design**. These are the same across every project; only the items inside them change. A "Close ✕" appears in the launcher's top header whenever an artifact is loaded, so the user can always get back to the welcome view.
+
+### Where the launcher template lives
+
+The launcher is generated, not handwritten. Two artifacts together produce it:
+
+- **`prototype-update/scripts/regenerate.py`** — the canonical generator. Holds the `SIDEBAR_SECTIONS` constant (where you customize per-project section/item layout), the inlined HTML template (header + sidebar + 3 views + footer), and the SPA JavaScript (click handlers, view switching, `Close ✕` behavior). Run this whenever artifact files change.
+- **`prototype-init/assets/index.html`** — a static snapshot of the empty-state launcher (what `regenerate.py` produces against an empty `prototype/`). Copied during init as a placeholder so the user can see the shell immediately, and overwritten by the first run of `regenerate.py`.
+
+If you need to change the launcher's structure, edit `regenerate.py` and regenerate the static snapshot via:
+
+```bash
+tmp=$(mktemp -d) && mkdir -p "$tmp/prototype/{prd,cujs,wireframes,styles,hi-fi,components}" \
+  && python3 ~/.claude/skills/prototype-update/scripts/regenerate.py "$tmp/prototype/" \
+  && cp "$tmp/prototype/index.html" ~/.claude/skills/prototype-init/assets/index.html \
+  && rm -rf "$tmp"
 ```
 
-The browser script reads the `@theme` block from `tokens.css` and generates utility classes on the fly. Swap `tokens.css` and every page re-themes on next refresh — no rebuild needed.
+### Inline `@theme` (not `@import`)
+
+Every HTML file inlines its own copy of the `@theme` block between `/* @theme:start */` and `/* @theme:end */` markers. This is because the Tailwind v4 browser CDN does not resolve `@import` to external files inside its tagged `<style>` blocks. `tokens.css` remains the canonical source; `design-themes`'s `apply_theme.py` script propagates token changes to every HTML file. Anything you create in the prototype tree should keep these markers so it stays themeable.
+
+### Inline-vs-newtab behavior
+
+- Product Definition + CUJs + Styles + Components → click opens **inline** (in the launcher's iframe)
+- Wireframes + HiFi → click opens in a **new tab** (full-page artifacts deserve full-tab focus)
+
+This is configured per item in `SIDEBAR_SECTIONS` in `regenerate.py`.
 
 ## Steps
 

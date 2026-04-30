@@ -116,9 +116,21 @@ Replace the entire file. Preserve the leading comment block — explain at the t
 }
 ```
 
-### Step 5 — Tell the user how to see the change
+### Step 5 — Propagate the new theme to every HTML file
 
-A browser refresh is sufficient — Tailwind's browser script reprocesses `@theme` on page load. Tell them: "Refresh the prototype tab(s) to see the new theme." Don't run `prototype-update` — that regenerates the launcher's HTML structure, which hasn't changed.
+**Critical** — `tokens.css` is the human-readable source of truth, but Tailwind's browser CDN does not resolve `@import` to external files inside its tagged `<style>` blocks. Every HTML file in `prototype/` therefore inlines a copy of the `@theme` block between `/* @theme:start */` and `/* @theme:end */` markers. Without propagation, editing `tokens.css` has zero visible effect.
+
+Run the bundled propagation script:
+
+```bash
+python3 ~/.claude/skills/design-themes/scripts/apply_theme.py prototype/
+```
+
+The script reads `prototype/tokens.css`, extracts the `@theme` block, walks every `.html` file in the prototype tree, and replaces the content between the marker comments with the new block. It reports which files were updated, which were already in sync, and which were skipped (no markers found — usually means a hand-rolled artifact that needs the markers added).
+
+### Step 6 — Tell the user how to see the change
+
+After propagation, a browser refresh is sufficient. Tell them: "Refresh the prototype tab(s) to see the new theme." Don't run `prototype-update` — that regenerates the launcher's HTML structure, which hasn't changed (and the regenerator pulls from `tokens.css` itself, so it stays in sync independently).
 
 ## Iteration Mode
 

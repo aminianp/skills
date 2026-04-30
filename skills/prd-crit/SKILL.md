@@ -79,8 +79,30 @@ Start by finding claims and assumptions in the content. A claim is any statement
 - Are the same terms used consistently throughout? (e.g., if the persona is "recruiter" in one section and "hiring manager" in another, flag it)
 - **Does each CUJ trace back to a specific JTBD, and does each JTBD have a CUJ?** Build the JTBD-to-CUJ map yourself; gaps in either direction are findings. JTBDs orphaned from CUJs are unfunded work; CUJs orphaned from JTBDs are user-value-untethered work.
 
+## Categorize and route every finding
+
+A finding without a category and an owner is a finding that goes nowhere. Tag every finding with a **Type** and a **Resolution path** so the user (and downstream skills) can act on it without re-deriving the routing each time.
+
+**Type** — pick one:
+
+- **Polish** — typos, punctuation, grammar, formatting. **Auto-fix without asking.** Don't make the user babysit obvious mechanical corrections; just apply them and report the diff. Asking permission for every "Goggle → Google" wastes cycles.
+- **Coverage** — missing JTBD, missing CUJ, undefined success criteria, no non-goals, no MVP/phasing. Surface as a finding; propose the missing artifact.
+- **Claim** — assertion that needs evidence, classified per the Claim Classification taxonomy (Data-backed / Anecdotal / Hypothesis). For Anecdotal/Hypothesis, propose either the evidence to find or the experiment to run.
+- **Inconsistency** — cross-section contradiction, term drift, broken JTBD↔CUJ mapping, JTBD with no CUJ.
+
+**Resolution path** — name the workflow, not just "needs fixing":
+
+- Polish → auto-applied; report the diff in chat for transparency
+- Coverage / Claim / Inconsistency → add as a new entry in the PRD's FAQ document under "Open Questions" with: question, status `Open`, owner, raised date, background. **Do not** silently update the PRD body, decision log, or FAQ resolved section. The workflow is:
+  1. Surface the finding to the user with the proposed addition
+  2. Add as an Open Question in the FAQ
+  3. Wait for user response (alignment)
+  4. Only after alignment, update the decision log with the resolution and (if relevant) edit the PRD body itself
+
+This keeps the audit trail intact and lets a future agent reconstruct what was decided and why.
+
 ## Final Checks
-Every time you are invoked, read through the entire content at least once and catch any issues as described in the PRD Critique sections above. Comment on the doc if you see these issues.
+Every time you are invoked, read through the entire content at least once and catch any issues as described in the PRD Critique sections above. Polish-type findings get fixed in-place; everything else flows through the FAQ workflow above. Don't bury findings in chat — anything worth raising is worth recording in the FAQ.
 
 ## Output Format
 Once you're done with the review, always return a verdict in chat + a summary of your findings:

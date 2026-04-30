@@ -101,8 +101,24 @@ Order the fields top-down so the categorization sits above the description:
 
 This converts the failure-modes section from a list of risks into a routable punch list.
 
+## After Stage 2: Build a facts table
+
+Before moving to optimization, capture the structural facts about each CUJ in a single table. This grounds Stage 3 in measurable signals rather than gut feel — the optimization analysis can react to "this CUJ has 7 steps and 2 window switches" instead of arguing from impressions.
+
+> | CUJ | Happy path steps | System errors | Window switches |
+> | --- | --- | --- | --- |
+> | <name> | N | N | N |
+
+Definitions — be strict:
+
+- **Happy path steps** — count the nodes in the happy-path Mermaid diagram. Pick a convention (with or without start/end terminals) and apply it consistently across every CUJ in the same table.
+- **System errors** — count failure modes that are *literally* system errors: 404, 500, broken file download, dead external link, JS error that breaks the page. **Not** subjective failures (confusion, low value, unclear copy). Most Stage 2 failure modes will *not* count here — only the Functionality-typed ones that involve an actual error state.
+- **Window switches** — count points where the user has to leave the product context: open a PDF in a viewer, click out to LinkedIn, switch to email, copy something to another tool. Each is a friction point and a potential drop-off.
+
+Render the table once, covering all CUJs side-by-side, so cross-CUJ comparison is easy. Then surface the table to the user before Stage 3 — it sets the agenda for what optimization should focus on.
+
 ## Step 3: Analysis and Optimization
-Once the user has approved the expanded flows, analyze them for optimization opportunities. Analyze the flows through the following lenses:
+Once the user has approved the expanded flows and the facts table, analyze them for optimization opportunities. Analyze the flows through the following lenses:
 
 **Context switches** — steps where the user must leave the product and return (e.g., check email, open another tool, copy from another system). Flag each one and note whether it's avoidable.
 
@@ -142,6 +158,16 @@ classDef decision fill:#f5f5dc,stroke:#b8b870,color:#1a1a1a
 ## Optimization Output Format
 For each CUJ:
 1. **Flow summary** — one sentence on what the flow does and how complex it is
-2. **Findings** — bulleted list of issues found, organized by lens, each with the specific step(s) involved
-3. **Recommendations** — specific, actionable suggestions (not redesigns — flag the problem and suggest a direction)
+2. **Facts** — pull the row from the facts table (steps / system errors / window switches) so the reader sees the grounded numbers next to the analysis
+3. **Findings** — bulleted list of issues found, organized by lens, each with the specific step(s) involved. Each finding gets the same Type + Addressed-by treatment as Stage 2 failure modes:
+
+   > **Finding name.**
+   > - Type: <Functionality | UX | Content> (primary + optional secondary)
+   > - Addressed by: <downstream skill or process>
+   > - Lens: <Context switches | Redundant steps | Memory burden | Dead ends | Step count>
+   > - Specific step(s): <which steps in the flow this concerns>
+   > - Recommendation: <specific, actionable direction — flag the problem and suggest a fix, not a full redesign>
+
 4. **Optimization score** — `Clean` / `Minor issues` / `Needs rework`
+
+The Type + Addressed-by tags on Stage 3 findings serve the same purpose they do in Stage 2: convert "things that could be optimized" into "routable work for `design-wireframes` / `design-themes` / `implementation-brief` / editorial." Without them, optimization output becomes a list someone has to re-route by hand.
