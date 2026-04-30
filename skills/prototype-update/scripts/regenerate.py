@@ -1,16 +1,18 @@
 #!/usr/bin/env python3
-"""Regenerate prototype/index.html by scanning artifact directories.
+"""Regenerate prototype/index.html as a single-page launcher.
 
-Reads `.html` files from prd/, cujs/, wireframes/, styles/, and hi-fi/
-and rewrites the launcher page so each file is linked. Filenames map
-to display names via the file's <title>, falling back to the stem.
+Layout: header on top, persistent sidebar on the left grouping artifacts
+into three sections (Product Definition, CUJs, Design), and a main pane
+that switches between three views — a welcome message, a page (iframe),
+and a list (for design containers like Wireframes that hold multiple
+items). Clicks on sidebar items either render the artifact inline in the
+iframe or, for design containers like Wireframes/HiFi where each item is
+a full-page artifact, open the chosen item in a new tab.
 
-The generated page uses Tailwind v4 (loaded from CDN) with the @theme
-block inlined directly into the launcher's <style type="text/tailwindcss">
-element. Theme contents are read from prototype/tokens.css at regenerate
-time. We inline rather than @import because the v4 browser CDN does not
-resolve external @imports inside its tagged style blocks; theme classes
-silently fail without inlining.
+The Tailwind v4 browser CDN does not resolve @import to external files
+inside its tagged style blocks, so we inline the @theme contents at
+regenerate time. tokens.css remains the human-readable source of truth;
+design-themes writes there, and regenerate.py syncs.
 
 Usage:
     python3 regenerate.py [prototype_dir]
@@ -23,24 +25,40 @@ from datetime import datetime
 from html import escape
 from pathlib import Path
 
-SECTIONS = [
-    ("PRD", "prd"),
-    ("CUJs", "cujs"),
-    ("Wireframes", "wireframes"),
-    ("Styles", "styles"),
-    ("Hi-fi", "hi-fi"),
+# Sidebar layout: three sections, each with items.
+# Item kinds:
+#   "page"  — direct artifact, click opens in iframe
+#   "auto"  — auto-discover .html files in `dir`, each becomes an inline page item
+#   "list"  — container directory; click shows item list in main pane
+#             list items use `item_mode` ("inline" or "newtab")
+SIDEBAR_SECTIONS = [
+    {
+        "label": "Product Definition",
+        "items": [
+            {"kind": "page", "label": "PRD", "src": "prd/site-prd.html"},
+            {"kind": "page", "label": "FAQ", "src": "prd/site-prd-faq.html"},
+            {"kind": "page", "label": "Decision Log", "src": "prd/site-prd-decision-log.html"},
+        ],
+    },
+    {
+        "label": "CUJs",
+        "items": [
+            {"kind": "auto", "dir": "cujs"},
+        ],
+    },
+    {
+        "label": "Design",
+        "items": [
+            {"kind": "list", "label": "Wireframes", "dir": "wireframes", "item_mode": "newtab"},
+            {"kind": "list", "label": "Styles", "dir": "styles", "item_mode": "inline"},
+            {"kind": "list", "label": "HiFi", "dir": "hi-fi", "item_mode": "newtab"},
+            {"kind": "list", "label": "Components", "dir": "components", "item_mode": "inline"},
+        ],
+    },
 ]
 
 TITLE_RE = re.compile(r"<title[^>]*>(.*?)</title>", re.IGNORECASE | re.DOTALL)
 THEME_BLOCK_RE = re.compile(r"@theme\s*\{[^}]*\}", re.DOTALL)
-
-EMPTY_HINT = (
-    'No artifacts yet. Run '
-    '<code class="px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-mono">/design-wireframes</code> '
-    'to create wireframes, or drop files into the artifact subdirectories &mdash; then run '
-    '<code class="px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-mono">/prototype-update</code> '
-    'to refresh this page.'
-)
 
 DEFAULT_THEME = """@theme {
   --color-bg: oklch(0.99 0 0);
@@ -58,13 +76,7 @@ DEFAULT_THEME = """@theme {
 
 
 def read_theme_block(prototype_dir: Path) -> str:
-    """Extract the @theme {...} block from prototype/tokens.css.
-
-    The Tailwind v4 browser CDN does not resolve @import to external files
-    inside <style type="text/tailwindcss"> blocks, so we inline the @theme
-    contents at regenerate time. tokens.css remains the human-readable
-    source of truth; design-themes writes there, and regenerate.py syncs.
-    """
+    """Extract the @theme block from prototype/tokens.css; fall back to default."""
     tokens_path = prototype_dir / "tokens.css"
     if tokens_path.exists():
         try:
@@ -91,67 +103,164 @@ def extract_title(html_path: Path) -> str:
     return html_path.stem
 
 
-def list_artifacts(section_dir: Path) -> list[tuple[str, str]]:
-    """Return (display_name, href) pairs for HTML files in a section dir."""
-    if not section_dir.is_dir():
+def list_html_files(directory: Path) -> list[tuple[str, str]]:
+    """Return (display_name, href) pairs for HTML files in a directory."""
+    if not directory.is_dir():
         return []
     files = sorted(
-        p for p in section_dir.iterdir()
+        p for p in directory.iterdir()
         if p.is_file() and p.suffix.lower() == ".html"
     )
-    return [(extract_title(p), f"{section_dir.name}/{p.name}") for p in files]
+    return [(extract_title(p), f"{directory.name}/{p.name}") for p in files]
 
 
-def render_sidebar(section_data: list[dict]) -> str:
-    items = []
-    for d in section_data:
-        items.append(
-            f'        <a href="#{d["subdir"]}" class="flex items-center justify-between px-2 py-1.5 rounded hover:bg-border/30">\n'
-            f'          <span>{escape(d["label"])}</span><span class="text-muted text-xs tabular-nums">{d["count"]}</span>\n'
-            f'        </a>'
-        )
-    return "\n".join(items)
-
-
-def render_section(label: str, subdir: str, items: list[tuple[str, str]]) -> str:
-    if not items:
-        body = '<ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>'
-    else:
-        lis = "".join(
-            f'<li class="text-sm"><a href="{escape(href)}" target="_blank" rel="noopener" '
-            f'class="text-fg underline decoration-accent underline-offset-2 hover:text-accent">'
-            f'{escape(name)}</a></li>'
-            for name, href in items
-        )
-        body = f'<ul class="space-y-1">{lis}</ul>'
+def sidebar_link(label: str, src: str, section: str) -> str:
+    """Sidebar inline (nav-page) link."""
     return (
-        f'        <section id="{escape(subdir)}" class="mb-10">\n'
-        f'          <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">{escape(label)}</h2>\n'
-        f'          {body}\n'
-        '        </section>'
+        f'          <li><a class="nav-page block px-2 py-1.5 rounded text-sm '
+        f'cursor-pointer hover:bg-border/30" '
+        f'data-src="{escape(src, quote=True)}" '
+        f'data-section="{escape(section, quote=True)}" '
+        f'data-label="{escape(label, quote=True)}">{escape(label)}</a></li>'
     )
+
+
+def sidebar_list_link(label: str, list_id: str, count: int, section: str) -> str:
+    """Sidebar list (nav-list) link with count badge."""
+    return (
+        f'          <li><a class="nav-list flex items-center justify-between px-2 py-1.5 rounded text-sm '
+        f'cursor-pointer hover:bg-border/30" '
+        f'data-list="{escape(list_id, quote=True)}" '
+        f'data-section="{escape(section, quote=True)}" '
+        f'data-label="{escape(label, quote=True)}">'
+        f'<span>{escape(label)}</span><span class="text-muted text-xs tabular-nums">{count}</span>'
+        f'</a></li>'
+    )
+
+
+def render_sidebar(prototype_dir: Path) -> tuple[str, str]:
+    """Return (sidebar_html, list_templates_html)."""
+    sections_html: list[str] = []
+    templates_html: list[str] = []
+
+    for section in SIDEBAR_SECTIONS:
+        section_label = section["label"]
+        items_html: list[str] = []
+        for item in section["items"]:
+            kind = item["kind"]
+            if kind == "page":
+                items_html.append(sidebar_link(item["label"], item["src"], section_label))
+            elif kind == "auto":
+                files = list_html_files(prototype_dir / item["dir"])
+                if not files:
+                    items_html.append(
+                        '          <li class="px-2 py-1.5 text-sm text-muted italic">&mdash; none &mdash;</li>'
+                    )
+                for name, href in files:
+                    items_html.append(sidebar_link(name, href, section_label))
+            elif kind == "list":
+                files = list_html_files(prototype_dir / item["dir"])
+                items_html.append(
+                    sidebar_list_link(item["label"], item["dir"], len(files), section_label)
+                )
+                templates_html.append(render_list_template(item, files))
+
+        sections_html.append(
+            f'      <div class="mb-6">\n'
+            f'        <h3 class="text-xs font-semibold uppercase tracking-wider text-muted pb-1.5 mb-2 border-b border-border">'
+            f'{escape(section_label)}</h3>\n'
+            f'        <ul class="space-y-0.5">\n'
+            + "\n".join(items_html) + "\n"
+            f'        </ul>\n'
+            f'      </div>'
+        )
+
+    return "\n".join(sections_html), "\n".join(templates_html)
+
+
+def render_list_template(item: dict, files: list[tuple[str, str]]) -> str:
+    """Render a <template> element holding the item list for a Design container."""
+    list_id = item["dir"]
+    item_mode = item["item_mode"]
+    section_label = "Design"
+    parent_label = item["label"]
+
+    if not files:
+        body = (
+            '<p class="text-sm text-muted italic">&mdash; no items &mdash;</p>'
+        )
+    else:
+        lis: list[str] = []
+        for name, href in files:
+            if item_mode == "newtab":
+                lis.append(
+                    f'<li><a href="{escape(href, quote=True)}" target="_blank" rel="noopener" '
+                    f'class="block px-3 py-2 rounded border border-border bg-surface hover:border-accent hover:text-accent text-sm">'
+                    f'{escape(name)}</a></li>'
+                )
+            else:  # inline
+                lis.append(
+                    f'<li><a class="nav-page block px-3 py-2 rounded border border-border bg-surface '
+                    f'hover:border-accent hover:text-accent text-sm cursor-pointer" '
+                    f'data-src="{escape(href, quote=True)}" '
+                    f'data-section="{escape(parent_label, quote=True)}" '
+                    f'data-label="{escape(name, quote=True)}">{escape(name)}</a></li>'
+                )
+        body = '<ul class="space-y-2">' + "".join(lis) + "</ul>"
+
+    return f'    <template id="template-{escape(list_id, quote=True)}">{body}</template>'
+
+
+SPA_SCRIPT = """
+    (function () {
+      function showView(id) {
+        ['welcome-view', 'page-view', 'list-view'].forEach(function (v) {
+          document.getElementById(v).hidden = (v !== id);
+        });
+      }
+      function showPage(src, section, label) {
+        document.getElementById('page-frame').src = src;
+        document.getElementById('page-section').textContent = section;
+        document.getElementById('page-label').textContent = label;
+        showView('page-view');
+      }
+      function showList(listId, section, label) {
+        var template = document.getElementById('template-' + listId);
+        var content = document.getElementById('list-content');
+        content.innerHTML = template ? template.innerHTML : '<p class="text-muted">No items.</p>';
+        document.getElementById('list-section').textContent = section;
+        document.getElementById('list-label').textContent = label;
+        showView('list-view');
+      }
+      document.body.addEventListener('click', function (e) {
+        var link = e.target.closest('.nav-page, .nav-list');
+        if (!link) return;
+        e.preventDefault();
+        if (link.classList.contains('nav-page')) {
+          showPage(link.dataset.src, link.dataset.section, link.dataset.label);
+        } else {
+          showList(link.dataset.list, link.dataset.section, link.dataset.label);
+        }
+      });
+      document.getElementById('back-from-page').addEventListener('click', function (e) {
+        e.preventDefault();
+        document.getElementById('page-frame').src = '';
+        showView('welcome-view');
+      });
+      document.getElementById('back-from-list').addEventListener('click', function (e) {
+        e.preventDefault();
+        showView('welcome-view');
+      });
+    })();
+"""
 
 
 def regenerate(prototype_dir: Path) -> None:
     if not prototype_dir.is_dir():
         sys.exit(f"prototype directory not found: {prototype_dir}")
 
-    section_data = []
-    for label, subdir in SECTIONS:
-        items = list_artifacts(prototype_dir / subdir)
-        section_data.append({"label": label, "subdir": subdir, "items": items, "count": len(items)})
-
-    has_any = any(d["count"] > 0 for d in section_data)
-    total = sum(d["count"] for d in section_data)
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M")
-
-    sidebar_html = render_sidebar(section_data)
-    sections_html = "\n".join(render_section(d["label"], d["subdir"], d["items"]) for d in section_data)
-    hint_block = (
-        ""
-        if has_any
-        else f'        <div class="rounded-md border border-border bg-surface px-4 py-3 mb-8 text-sm text-muted leading-relaxed">{EMPTY_HINT}</div>\n'
-    )
+    sidebar_html, templates_html = render_sidebar(prototype_dir)
     theme_block = read_theme_block(prototype_dir)
 
     html = f"""<!DOCTYPE html>
@@ -169,16 +278,14 @@ def regenerate(prototype_dir: Path) -> None:
   <style>
     html, body {{ height: 100%; }}
     body {{ display: flex; flex-direction: column; }}
-    .layout {{ display: flex; flex: 1; min-height: 0; }}
-    .layout > main {{ overflow-y: auto; }}
-    section[id] {{ scroll-margin-top: 1rem; }}
+    iframe {{ background: var(--color-bg); }}
   </style>
 </head>
 <body class="bg-bg text-fg font-sans antialiased">
   <header class="border-b border-border px-6 py-3 flex items-center justify-between bg-surface shrink-0">
     <div>
       <h1 class="text-base font-semibold tracking-tight">Prototype</h1>
-      <p class="text-xs text-muted">Rapid-prototyping launcher &middot; links open in new tabs</p>
+      <p class="text-xs text-muted">Pick something from the sidebar to view it inline. Wireframes / HiFi open in a new tab.</p>
     </div>
     <div class="text-xs text-muted text-right space-y-0.5">
       <div>Last updated {timestamp}</div>
@@ -186,17 +293,49 @@ def regenerate(prototype_dir: Path) -> None:
     </div>
   </header>
 
-  <div class="layout">
-    <aside class="w-52 shrink-0 border-r border-border bg-surface p-4">
-      <nav class="text-sm space-y-0.5">
+  <div class="flex-1 flex min-h-0">
+    <aside class="w-56 shrink-0 border-r border-border bg-surface px-4 py-6 overflow-y-auto">
 {sidebar_html}
-      </nav>
     </aside>
 
-    <main class="px-8 py-8">
-      <div class="max-w-2xl">
-{hint_block}{sections_html}
+    <main class="flex-1 flex flex-col min-w-0 bg-bg">
+      <div id="welcome-view" class="px-8 py-12 max-w-2xl">
+        <h2 class="text-2xl font-semibold mb-3 tracking-tight">Welcome</h2>
+        <p class="text-muted leading-relaxed">Pick something from the sidebar.</p>
+        <ul class="mt-6 space-y-2 text-sm text-muted">
+          <li><strong class="text-fg">Product Definition</strong> &mdash; the PRD, its FAQ, and the decision log.</li>
+          <li><strong class="text-fg">CUJs</strong> &mdash; job-anchored user journeys with Mermaid flow diagrams.</li>
+          <li><strong class="text-fg">Design</strong> &mdash; wireframes and hi-fi prototypes (open in new tabs); style and component pages (open inline).</li>
+        </ul>
       </div>
+
+      <div id="page-view" hidden class="flex flex-col h-full min-h-0">
+        <div class="border-b border-border px-6 py-2 flex items-center justify-between bg-surface text-sm shrink-0">
+          <div class="text-muted">
+            <span id="page-section">Section</span>
+            <span class="mx-1.5">/</span>
+            <span id="page-label" class="text-fg font-medium">Label</span>
+          </div>
+          <a id="back-from-page" class="text-xs text-muted hover:text-accent cursor-pointer">Close &times;</a>
+        </div>
+        <iframe id="page-frame" src="" class="flex-1 w-full border-0"></iframe>
+      </div>
+
+      <div id="list-view" hidden class="flex flex-col h-full min-h-0">
+        <div class="border-b border-border px-6 py-2 flex items-center justify-between bg-surface text-sm shrink-0">
+          <div class="text-muted">
+            <span id="list-section">Section</span>
+            <span class="mx-1.5">/</span>
+            <span id="list-label" class="text-fg font-medium">Label</span>
+          </div>
+          <a id="back-from-list" class="text-xs text-muted hover:text-accent cursor-pointer">Close &times;</a>
+        </div>
+        <div class="overflow-y-auto px-8 py-8">
+          <div id="list-content" class="max-w-2xl"></div>
+        </div>
+      </div>
+
+{templates_html}
     </main>
   </div>
 
@@ -204,13 +343,15 @@ def regenerate(prototype_dir: Path) -> None:
     <div>Generated by <code class="font-mono">prototype-update</code></div>
     <div>Stop server: <code class="px-1 py-0.5 rounded bg-border/40 text-fg font-mono">kill $(cat prototype/.server.pid)</code></div>
   </footer>
+
+  <script>{SPA_SCRIPT}</script>
 </body>
 </html>
 """
 
     out = prototype_dir / "index.html"
     out.write_text(html, encoding="utf-8")
-    print(f"Regenerated {out} ({total} artifact{'s' if total != 1 else ''})")
+    print(f"Regenerated {out}")
 
 
 if __name__ == "__main__":

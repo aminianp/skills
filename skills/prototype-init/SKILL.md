@@ -49,9 +49,11 @@ From this skill's `assets/` directory into the user's project:
 - `assets/index.html` → `prototype/index.html`
 - `assets/tokens.css` → `prototype/tokens.css`
 
-Then create the empty artifact subdirectories: `prototype/{prd,cujs,wireframes,styles,hi-fi}/`.
+Then create the empty artifact subdirectories: `prototype/{prd,cujs,wireframes,styles,hi-fi,components}/`.
 
 The default `tokens.css` ships a neutral monochrome theme so wireframes look reasonable on first run. The `design-themes` skill replaces this file with a custom theme later.
+
+The `index.html` shipped here is a placeholder that tells the user to run `/prototype-update`. Step 6 below should run that automatically so the user lands on a populated launcher.
 
 ### 3. Check if port 3000 is free
 Run `lsof -i :3000`. If something is bound:
@@ -68,11 +70,20 @@ echo $! > prototype/.server.pid
 
 The PID file lets a future session (or a shutdown command) stop the right process. The log file captures request traffic for debugging.
 
-### 5. Report to the user
+### 5. Run `prototype-update` once to populate the launcher
+The static placeholder `index.html` shipped in step 2 just tells the user to run `/prototype-update`. Run it now so the user lands on a populated launcher with the proper sidebar (Product Definition, CUJs, Design):
+
+```bash
+python3 ~/.claude/skills/prototype-update/scripts/regenerate.py prototype/
+```
+
+If artifacts already exist in the subdirectories, they show up immediately. If not, sections show "— none —" or counts of 0 — still useful as a navigable shell.
+
+### 6. Report to the user
 Tell them:
 - The URL (`http://localhost:3000`)
 - The next logical step (`/design-wireframes` to add wireframes, or drop PRD/CUJ content into `prototype/prd/` and `prototype/cujs/` manually)
-- That they should run `/prototype-update` after adding artifacts to refresh the landing page
+- That they should run `/prototype-update` after adding artifacts to refresh the launcher
 
 ## Shutdown
 If the user wants to stop the server:

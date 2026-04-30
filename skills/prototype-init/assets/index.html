@@ -25,77 +25,33 @@
   <style>
     html, body { height: 100%; }
     body { display: flex; flex-direction: column; }
-    .layout { display: flex; flex: 1; min-height: 0; }
-    .layout > main { overflow-y: auto; }
-    section[id] { scroll-margin-top: 1rem; }
   </style>
 </head>
 <body class="bg-bg text-fg font-sans antialiased">
   <header class="border-b border-border px-6 py-3 flex items-center justify-between bg-surface shrink-0">
     <div>
       <h1 class="text-base font-semibold tracking-tight">Prototype</h1>
-      <p class="text-xs text-muted">Rapid-prototyping launcher &middot; links open in new tabs</p>
+      <p class="text-xs text-muted">Scaffold ready &middot; launcher not yet populated</p>
     </div>
-    <div class="text-xs text-muted text-right space-y-0.5">
-      <div>No artifacts indexed yet</div>
+    <div class="text-xs text-muted text-right">
       <div class="font-mono">localhost:3000</div>
     </div>
   </header>
 
-  <div class="layout">
-    <aside class="w-52 shrink-0 border-r border-border bg-surface p-4">
-      <nav class="text-sm space-y-0.5">
-        <a href="#prd" class="flex items-center justify-between px-2 py-1.5 rounded hover:bg-border/30">
-          <span>PRD</span><span class="text-muted text-xs tabular-nums">0</span>
-        </a>
-        <a href="#cujs" class="flex items-center justify-between px-2 py-1.5 rounded hover:bg-border/30">
-          <span>CUJs</span><span class="text-muted text-xs tabular-nums">0</span>
-        </a>
-        <a href="#wireframes" class="flex items-center justify-between px-2 py-1.5 rounded hover:bg-border/30">
-          <span>Wireframes</span><span class="text-muted text-xs tabular-nums">0</span>
-        </a>
-        <a href="#styles" class="flex items-center justify-between px-2 py-1.5 rounded hover:bg-border/30">
-          <span>Styles</span><span class="text-muted text-xs tabular-nums">0</span>
-        </a>
-        <a href="#hi-fi" class="flex items-center justify-between px-2 py-1.5 rounded hover:bg-border/30">
-          <span>Hi-fi</span><span class="text-muted text-xs tabular-nums">0</span>
-        </a>
-      </nav>
-    </aside>
-
-    <main class="px-8 py-8">
-      <div class="max-w-2xl">
-        <div class="rounded-md border border-border bg-surface px-4 py-3 mb-8 text-sm text-muted leading-relaxed">
-          No artifacts yet. Run <code class="px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-mono">/design-wireframes</code> to create wireframes, or drop files into the artifact subdirectories &mdash; then run <code class="px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-mono">/prototype-update</code> to refresh this page.
-        </div>
-
-        <section id="prd" class="mb-10">
-          <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">PRD</h2>
-          <ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>
-        </section>
-
-        <section id="cujs" class="mb-10">
-          <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">CUJs</h2>
-          <ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>
-        </section>
-
-        <section id="wireframes" class="mb-10">
-          <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Wireframes</h2>
-          <ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>
-        </section>
-
-        <section id="styles" class="mb-10">
-          <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Styles</h2>
-          <ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>
-        </section>
-
-        <section id="hi-fi" class="mb-10">
-          <h2 class="text-xs font-semibold uppercase tracking-wider text-muted mb-3">Hi-fi</h2>
-          <ul class="space-y-1"><li class="text-sm text-muted italic">&mdash; none &mdash;</li></ul>
-        </section>
+  <main class="flex-1 overflow-y-auto px-8 py-12">
+    <div class="max-w-2xl mx-auto">
+      <div class="rounded-md border border-border bg-surface px-5 py-4">
+        <h2 class="text-lg font-semibold mb-2">Scaffold ready</h2>
+        <p class="text-sm text-muted leading-relaxed">
+          The <code class="px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-mono">prototype/</code> directory has been created.
+          Run <code class="px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-mono">/prototype-update</code> to scan the artifact subdirectories
+          (<code class="font-mono text-xs">prd/</code>, <code class="font-mono text-xs">cujs/</code>, <code class="font-mono text-xs">wireframes/</code>,
+          <code class="font-mono text-xs">styles/</code>, <code class="font-mono text-xs">hi-fi/</code>, <code class="font-mono text-xs">components/</code>)
+          and populate this launcher with a sidebar grouping artifacts by Product Definition, CUJs, and Design.
+        </p>
       </div>
-    </main>
-  </div>
+    </div>
+  </main>
 
   <footer class="border-t border-border px-6 py-2 text-xs text-muted flex items-center justify-between bg-surface shrink-0">
     <div>Generated by <code class="font-mono">prototype-init</code></div>
