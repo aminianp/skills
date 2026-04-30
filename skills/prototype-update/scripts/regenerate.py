@@ -251,6 +251,10 @@ SPA_SCRIPT = """
         document.getElementById('page-frame').src = '';
         showView('welcome-view');
       });
+      document.getElementById('list-home').addEventListener('click', function (e) {
+        e.preventDefault();
+        showView('welcome-view');
+      });
     })();
 """
 
@@ -319,6 +323,8 @@ def regenerate(prototype_dir: Path) -> None:
       <div id="list-view" hidden class="flex flex-col h-full min-h-0">
         <div class="border-b border-border px-6 py-2.5 flex items-center justify-between bg-surface text-sm shrink-0">
           <div class="text-muted">
+            <a id="list-home" class="hover:text-accent cursor-pointer">&larr; Prototype</a>
+            <span class="mx-1.5">/</span>
             <span id="list-section">Section</span>
             <span class="mx-1.5">/</span>
             <span id="list-label" class="text-fg font-medium">Label</span>
