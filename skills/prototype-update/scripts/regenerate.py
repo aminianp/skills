@@ -5,12 +5,12 @@ Reads `.html` files from prd/, cujs/, wireframes/, styles/, and hi-fi/
 and rewrites the launcher page so each file is linked. Filenames map
 to display names via the file's <title>, falling back to the stem.
 
-The generated page uses Tailwind v4 (loaded from CDN) and pulls design
-tokens from /tokens.css via the inline `@import` pattern that the
-Tailwind browser script supports. Layout has a header, sidebar (with
-section counts), main content (scrollable), and a footer — same shape
-as the static initial scaffold so the experience is consistent before
-and after regenerate runs.
+The generated page uses Tailwind v4 (loaded from CDN) with the @theme
+block inlined directly into the launcher's <style type="text/tailwindcss">
+element. Theme contents are read from prototype/tokens.css at regenerate
+time. We inline rather than @import because the v4 browser CDN does not
+resolve external @imports inside its tagged style blocks; theme classes
+silently fail without inlining.
 
 Usage:
     python3 regenerate.py [prototype_dir]
@@ -32,6 +32,7 @@ SECTIONS = [
 ]
 
 TITLE_RE = re.compile(r"<title[^>]*>(.*?)</title>", re.IGNORECASE | re.DOTALL)
+THEME_BLOCK_RE = re.compile(r"@theme\s*\{[^}]*\}", re.DOTALL)
 
 EMPTY_HINT = (
     'No artifacts yet. Run '
@@ -40,6 +41,40 @@ EMPTY_HINT = (
     '<code class="px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-mono">/prototype-update</code> '
     'to refresh this page.'
 )
+
+DEFAULT_THEME = """@theme {
+  --color-bg: oklch(0.99 0 0);
+  --color-surface: oklch(1 0 0);
+  --color-fg: oklch(0.18 0 0);
+  --color-muted: oklch(0.5 0 0);
+  --color-border: oklch(0.92 0 0);
+  --color-primary: oklch(0.28 0 0);
+  --color-primary-fg: oklch(0.99 0 0);
+  --color-accent: oklch(0.55 0 0);
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  --font-mono: "SF Mono", Menlo, Consolas, monospace;
+  --radius: 0.375rem;
+}"""
+
+
+def read_theme_block(prototype_dir: Path) -> str:
+    """Extract the @theme {...} block from prototype/tokens.css.
+
+    The Tailwind v4 browser CDN does not resolve @import to external files
+    inside <style type="text/tailwindcss"> blocks, so we inline the @theme
+    contents at regenerate time. tokens.css remains the human-readable
+    source of truth; design-themes writes there, and regenerate.py syncs.
+    """
+    tokens_path = prototype_dir / "tokens.css"
+    if tokens_path.exists():
+        try:
+            content = tokens_path.read_text(encoding="utf-8")
+            match = THEME_BLOCK_RE.search(content)
+            if match:
+                return match.group(0)
+        except (OSError, UnicodeDecodeError):
+            pass
+    return DEFAULT_THEME
 
 
 def extract_title(html_path: Path) -> str:
@@ -117,6 +152,7 @@ def regenerate(prototype_dir: Path) -> None:
         if has_any
         else f'        <div class="rounded-md border border-border bg-surface px-4 py-3 mb-8 text-sm text-muted leading-relaxed">{EMPTY_HINT}</div>\n'
     )
+    theme_block = read_theme_block(prototype_dir)
 
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -125,7 +161,11 @@ def regenerate(prototype_dir: Path) -> None:
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Prototype</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <style type="text/tailwindcss">@import "/tokens.css";</style>
+  <style type="text/tailwindcss">
+    /* @theme:start — synced from prototype/tokens.css */
+    {theme_block}
+    /* @theme:end */
+  </style>
   <style>
     html, body {{ height: 100%; }}
     body {{ display: flex; flex-direction: column; }}
