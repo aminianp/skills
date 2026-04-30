@@ -72,6 +72,35 @@ Present the generated flows to the user for review. Work with them to expand eac
 
 Use this information to update the flow descriptions and Mermaid diagrams to include these branches. The goal is to create a comprehensive map of the user journey that accounts for both ideal and non-ideal scenarios.
 
+### Categorize each failure mode
+
+Without categorization, failure modes become a wall of bad things with no clear owner. Every failure mode must include two metadata fields so a downstream reader (or downstream skill) can route the work:
+
+**Type** — pick one (primary + optional secondary):
+
+- **Functionality** — broken feature, dead link, wrong rendering, monitoring miss. Caught by automation.
+- **UX** — design / copy / information hierarchy / IA causes the user to drop off, take longer than the JTBD allows, or draw the wrong conclusion. Caught by design review or funnel data.
+- **Content** — text quality, freshness, accuracy, or coverage drives the failure. Caught by editorial review or freshness audit.
+
+**Addressed by** — name where the fix lives, not just "needs fixing":
+
+- Functionality → `implementation-brief` (acceptance criteria + CI requirements) and runtime alerting
+- UX → `design-wireframes` (layout / copy / hierarchy) and/or `design-themes` (visual system)
+- Content → ongoing editorial process (cadence audits, pre-publish QA)
+
+### Required structure for each failure mode
+
+Order the fields top-down so the categorization sits above the description:
+
+> **Failure name.**
+> - Type: <Functionality | UX | Content> (primary + optional secondary)
+> - Addressed by: <downstream skill or process>
+> - Trigger: <what causes this failure>
+> - User experience: <what the user perceives>
+> - Recovery: <the specific concrete fix>
+
+This converts the failure-modes section from a list of risks into a routable punch list.
+
 ## Step 3: Analysis and Optimization
 Once the user has approved the expanded flows, analyze them for optimization opportunities. Analyze the flows through the following lenses:
 
