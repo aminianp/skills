@@ -76,10 +76,16 @@ From this skill's `assets/` directory into the user's project:
 - `assets/index.html` → `prototype/index.html`
 - `assets/tokens.css` → `prototype/tokens.css`
 - `assets/APPROVED` → `prototype/APPROVED`
+- `assets/styles/design-guidelines.html` → `prototype/styles/design-guidelines.html` (vendor design guidelines reference)
+- `assets/frames/*.html` → `prototype/frames/` (six frame templates: web-spa, phone-ios, phone-android, watch, desktop, terminal)
 
-Then create the empty artifact subdirectories: `prototype/{prd,cujs,wireframes,styles,hi-fi,components}/`.
+Then create the empty artifact subdirectories: `prototype/{prd,cujs,wireframes,styles,hi-fi,components,frames}/` (the `frames/` dir already has the six templates from above; the rest start empty).
 
-The `APPROVED` file is the project's approval manifest. It lists which artifact in each category is the source of truth (approved PRD, approved prototype, approved theme, etc.). Format: `category: relative-path`, one per line, comments allowed with `#`. Initially empty &mdash; downstream skills (`prd-crit`, `design-prototypes`, `design-themes`) write into it as the user signs off on each artifact, and the launcher's `regenerate.py` reads it to render "✓ Approved" badges next to matching items in the sidebar.
+The `APPROVED` file is the project's approval manifest. It lists which artifact in each category is the source of truth (approved PRD, approved prototype, approved theme, etc.) and which **render target** the project uses (web-spa, phone-ios, watch, terminal, etc.). Format: `category: value`, one per line, comments allowed with `#`. The scaffold ships with `target: web-spa` as the default; ask the user during init if their project targets a different form factor.
+
+Downstream skills (`prd-crit`, `design-prototypes`, `design-themes`, `map-cujs`, `design-wireframes`) write into this file as the user signs off on each artifact. The launcher's `regenerate.py` reads it to render "✓ Selected" pills next to matching items and a small green check next to aligned section headers.
+
+The `frames/` directory holds illustrative form-factor wrappers (iPhone shape, watch face, terminal window, etc.). They serve two purposes: as visual reference for what each target looks like, and as starting templates that `design-prototypes` and `design-wireframes` can copy from when building artifacts for non-web targets. See `styles/design-guidelines.html` for the canonical vendor reference each target maps to (Apple HIG, Material 3, Microsoft Fluent, Meta Horizon, etc.).
 
 The default `tokens.css` ships a neutral monochrome theme so wireframes look reasonable on first run. The `design-themes` skill replaces this file with a custom theme later.
 

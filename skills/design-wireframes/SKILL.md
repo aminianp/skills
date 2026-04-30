@@ -115,6 +115,14 @@ python3 ~/.claude/skills/prototype-update/scripts/regenerate.py prototype/
 
 (Adjust the path if the user's skills directory lives elsewhere.)
 
+### Step 5b — Frame the wireframe to the target form factor
+
+Read `target:` from `prototype/APPROVED`. If it's anything other than `web-spa`, wrap the wireframe content inside the matching frame from `prototype/frames/<target>.html` &mdash; phone shape, watch face, terminal window, etc. The wireframe page should still render standalone in a browser; the frame is part of its markup, not an iframe.
+
+For `web-spa` (default), no frame &mdash; the wireframe content fills the viewport.
+
+When in doubt about platform conventions for the target (e.g., where status bars go on Android vs iOS, what a watch glance looks like), open `prototype/styles/design-guidelines.html` and follow the vendor link for that target. Don't approximate from memory; anchor to the canonical source.
+
 ### Step 6 — Tell the user what to do next
 
 Direct them to refresh the prototype tab to see the new wireframes listed, and remind them they can run `design-themes` if they want to change the visual style — wireframes will re-theme on browser refresh.

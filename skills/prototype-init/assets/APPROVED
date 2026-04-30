@@ -10,6 +10,27 @@
 #   prototype:  the selected interactive prototype (e.g., hi-fi/cool-minimal-v1.html)
 #   theme:      the active theme tokens file (typically tokens.css)
 #   components: set when extracted from the approved prototype
+#   frames:     set to "aligned" once a frame template is picked for the project
+#   target:     the rendering target / form factor for prototypes and wireframes.
+#               Common values:
+#                 web-spa            - default, no device frame
+#                 phone-ios          - iPhone shape (Apple HIG)
+#                 phone-android      - Pixel shape (Material 3)
+#                 tablet-ipados      - iPad (Apple HIG)
+#                 tablet-android     - Android large screen (Material 3)
+#                 watch-watchos      - Apple Watch (Apple HIG)
+#                 watch-wear-os      - Wear OS smartwatch
+#                 tv-tvos            - Apple TV
+#                 tv-android-tv      - Android TV / Google TV
+#                 desktop-macos      - macOS app
+#                 desktop-windows    - Windows app (Microsoft Fluent 2)
+#                 xr-visionos        - Apple Vision Pro
+#                 xr-horizon         - Meta Quest
+#                 auto-carplay       - Apple CarPlay
+#                 auto-android-auto  - Android Auto / Automotive OS
+#                 terminal           - TUI / CLI
+#               See styles/design-guidelines.html for the canonical vendor
+#               reference each target maps to.
 #
 # Item-level matches render a "✓ Selected" pill on the matching card in the
 # launcher list view (prototypes, styles). Section/list keys also render a
@@ -22,6 +43,10 @@
 #   design-themes     → writes/updates `styles:` and `theme:` when committed
 #   design-wireframes → writes/updates `wireframes:` when aligned
 #   design-prototypes → writes/updates `prototype:` when user picks "the one"
+#                       reads `target:` to choose the right frame template
 #   design-components → reads `prototype:`; writes `components:` after extraction
+#   prototype-init    → writes initial `target:` based on user's project type
 #
 # Add categories ad-hoc as needed; tools that don't recognize a key just ignore it.
+
+target: web-spa

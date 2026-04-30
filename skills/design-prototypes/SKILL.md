@@ -106,6 +106,16 @@ Each prototype HTML follows this shape:
 - **Default**: bare URL (no hash) routes to `#/home`. Bad/missing routes fall back to home rather than showing a blank page.
 - **In-prototype links** use the hash format (`href="#/work"`) so the JS can intercept them. External links (off-site) use real `href` and may use `target="_blank"`.
 
+## Render Target
+
+Every project's manifest carries a `target:` field that names the form factor the prototype is meant to render in (`web-spa`, `phone-ios`, `phone-android`, `watch-watchos`, `watch-wear-os`, `tablet-ipados`, `desktop-macos`, `desktop-windows`, `tv-tvos`, `tv-android-tv`, `xr-visionos`, `xr-horizon`, `auto-carplay`, `auto-android-auto`, `terminal`). Default is `web-spa` (no device frame).
+
+When `target:` is anything other than `web-spa`, wrap the prototype's content in the matching frame from `prototype/frames/<target>.html`. The frame contains the device chrome (notch + status bar for phones, watch bezel + crown, terminal title bar, etc.); the prototype's actual page content goes inside the frame's `.slot` element. The same hash routing still applies — pages swap inside the slot.
+
+For form factors with no shipped frame (e.g., specific TV or XR layouts), either copy a related frame and adapt it, or build a new one and add a row to `styles/design-guidelines.html` referencing the canonical vendor source. Don't invent design conventions — anchor to the vendor's HIG / Material / Fluent / Horizon docs.
+
+The prototype renders correctness for design review, not platform-native fidelity. A faux-iOS HTML prototype communicates flow and visual intent; production iOS code is built separately by engineering. See the `Vendor Design Guidelines` page (under Styles) for the canonical references each target should anchor to.
+
 ## When Building a New Prototype
 
 1. **Confirm the variant scope first.** What is *different* about this prototype vs. the existing ones? Theme? Font? Copy? Flow (different number of pages)? IA? Be explicit; the variant slug should reflect this.

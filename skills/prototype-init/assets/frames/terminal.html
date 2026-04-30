@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frame: terminal</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    /* @theme:start — keep in sync with prototype/tokens.css */
+    @theme {
+      --color-bg: oklch(0.99 0 0);
+      --color-surface: oklch(1 0 0);
+      --color-fg: oklch(0.18 0 0);
+      --color-muted: oklch(0.5 0 0);
+      --color-border: oklch(0.92 0 0);
+      --color-primary: oklch(0.28 0 0);
+      --color-primary-fg: oklch(0.99 0 0);
+      --color-accent: oklch(0.55 0 0);
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "SF Mono", Menlo, Consolas, monospace;
+      --radius: 0.375rem;
+    }
+    /* @theme:end */
+  </style>
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+    .stage { background: color-mix(in oklch, var(--color-fg) 92%, var(--color-bg)); display: flex; align-items: center; justify-content: center; padding: 2.5rem 1.5rem; min-height: 100%; }
+    .term {
+      width: 100%;
+      max-width: 900px;
+      background: #0d0d0d;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .term-titlebar {
+      background: #1c1c1c;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    .term-titlebar span.dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; } .dot-y { background: #ffbd2e; } .dot-g { background: #28ca42; }
+    .term-title { color: #999; font-size: 0.78rem; font-family: var(--font-mono); margin-left: auto; margin-right: auto; padding-right: 60px; }
+    .term-body {
+      padding: 1.25rem 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: #d4d4d4;
+      min-height: 420px;
+    }
+    .ansi-green { color: #50fa7b; }
+    .ansi-yellow { color: #f1fa8c; }
+    .ansi-blue { color: #8be9fd; }
+    .ansi-magenta { color: #ff79c6; }
+    .ansi-dim { color: #6272a4; }
+    .ansi-red { color: #ff5555; }
+    .cursor { display: inline-block; width: 8px; height: 1em; background: #d4d4d4; vertical-align: text-bottom; animation: blink 1s steps(2, start) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .placeholder-banner { background: #1a1a1a; border: 1px dashed #444; border-radius: 6px; padding: 0.75rem 1rem; margin-top: 1.25rem; color: #888; font-size: 0.78rem; }
+  </style>
+</head>
+<body class="bg-bg text-fg font-sans antialiased">
+
+  <header class="border-b border-border px-6 py-3 flex items-center justify-between bg-surface text-sm shrink-0">
+    <div class="text-muted">
+      <a href="/" target="_top" class="hover:text-accent">&larr; Prototype</a>
+      <span class="mx-1.5">/</span>
+      <span>Frames</span>
+      <span class="mx-1.5">/</span>
+      <span class="text-fg">terminal</span>
+    </div>
+    <div class="text-xs text-muted">TUI / CLI faux-terminal</div>
+  </header>
+
+  <main class="flex-1 overflow-y-auto">
+    <div class="stage">
+      <div class="term">
+        <div class="term-titlebar">
+          <span class="dot dot-r"></span>
+          <span class="dot dot-y"></span>
+          <span class="dot dot-g"></span>
+          <div class="term-title">~/projects/your-cli &mdash; bash &mdash; 80&times;24</div>
+        </div>
+        <div class="term-body">
+<span class="ansi-dim">$</span> <span class="ansi-green">your-cli</span> <span class="ansi-blue">deploy</span> <span class="ansi-yellow">--env</span> staging
+<span class="ansi-dim">  &rarr;</span> Resolving dependencies...      <span class="ansi-green">ok</span>
+<span class="ansi-dim">  &rarr;</span> Building image...               <span class="ansi-green">ok</span>
+<span class="ansi-dim">  &rarr;</span> Pushing to registry...          <span class="ansi-green">ok</span>
+<span class="ansi-dim">  &rarr;</span> Rolling out to staging...       <span class="ansi-yellow">2 / 3 instances</span>
+<span class="ansi-magenta">  i</span> <span class="ansi-dim">tail logs:</span> <span class="ansi-blue">your-cli logs --follow</span>
+
+<span class="ansi-dim">$</span> <span class="cursor"></span>
+          <div class="placeholder-banner">
+Prototype slot. Replace this and the demo lines above with your CLI&rsquo;s real output.
+Use the helper classes <code>ansi-green / yellow / blue / magenta / dim / red</code> to match terminal-color conventions.
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="border-t border-border px-6 py-2 text-xs text-muted bg-surface shrink-0">
+    Frame template &middot; terminal &middot; ANSI-color helpers included
+  </footer>
+</body>
+</html>

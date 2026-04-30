@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frame: web-spa</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    /* @theme:start — keep in sync with prototype/tokens.css */
+    @theme {
+      --color-bg: oklch(0.99 0 0);
+      --color-surface: oklch(1 0 0);
+      --color-fg: oklch(0.18 0 0);
+      --color-muted: oklch(0.5 0 0);
+      --color-border: oklch(0.92 0 0);
+      --color-primary: oklch(0.28 0 0);
+      --color-primary-fg: oklch(0.99 0 0);
+      --color-accent: oklch(0.55 0 0);
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "SF Mono", Menlo, Consolas, monospace;
+      --radius: 0.375rem;
+    }
+    /* @theme:end */
+  </style>
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+  </style>
+</head>
+<body class="bg-bg text-fg font-sans antialiased">
+
+  <header class="border-b border-border px-6 py-3 flex items-center justify-between bg-surface text-sm shrink-0">
+    <div class="text-muted">
+      <a href="/" target="_top" class="hover:text-accent">&larr; Prototype</a>
+      <span class="mx-1.5">/</span>
+      <span>Frames</span>
+      <span class="mx-1.5">/</span>
+      <span class="text-fg">web-spa</span>
+    </div>
+    <div class="text-xs text-muted">No frame &middot; content fills the viewport</div>
+  </header>
+
+  <main class="flex-1 overflow-y-auto">
+    <section class="max-w-3xl mx-auto px-6 pt-10 pb-6">
+      <h1 class="text-3xl font-semibold tracking-tight mb-3">Frame: web-spa</h1>
+      <p class="text-muted leading-relaxed">No-op identity frame. The prototype renders directly inside the browser viewport with no device chrome. Use this when targeting responsive web (desktop + mobile breakpoints handled inside the prototype itself, not by an outer frame).</p>
+    </section>
+
+    <section class="max-w-3xl mx-auto px-6 pb-10">
+      <h2 class="text-sm font-semibold uppercase tracking-[0.15em] text-muted mb-3">When to use</h2>
+      <ul class="text-sm space-y-2 text-muted leading-relaxed">
+        <li>&middot; Building a website, web app, or web SaaS product.</li>
+        <li>&middot; Building a responsive prototype that adapts via media queries inside its own markup.</li>
+        <li>&middot; Default for projects that don&rsquo;t target a single platform.</li>
+      </ul>
+    </section>
+
+    <section class="max-w-3xl mx-auto px-6 pb-10">
+      <h2 class="text-sm font-semibold uppercase tracking-[0.15em] text-muted mb-3">Slot</h2>
+      <p class="text-sm text-muted leading-relaxed">The prototype&rsquo;s <code class="font-mono text-fg">&lt;body&gt;</code> content is the slot. There&rsquo;s no wrapper to inject into.</p>
+    </section>
+
+    <section class="max-w-3xl mx-auto px-6 pb-16">
+      <h2 class="text-sm font-semibold uppercase tracking-[0.15em] text-muted mb-3">Manifest entry</h2>
+      <pre class="bg-surface border border-border rounded p-3 text-xs font-mono text-fg overflow-x-auto"><code>target: web-spa</code></pre>
+    </section>
+  </main>
+
+  <footer class="border-t border-border px-6 py-2 text-xs text-muted bg-surface shrink-0">
+    Frame template &middot; web-spa
+  </footer>
+</body>
+</html>
