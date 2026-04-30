@@ -49,8 +49,8 @@ SIDEBAR_SECTIONS = [
     {
         "label": "Design",
         "items": [
-            {"kind": "list", "label": "Wireframes", "dir": "wireframes", "item_mode": "newtab"},
             {"kind": "list", "label": "Styles", "dir": "styles", "item_mode": "inline"},
+            {"kind": "list", "label": "Wireframes", "dir": "wireframes", "item_mode": "newtab"},
             {"kind": "list", "label": "HiFi", "dir": "hi-fi", "item_mode": "newtab"},
             {"kind": "list", "label": "Components", "dir": "components", "item_mode": "inline"},
         ],
