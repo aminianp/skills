@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Component: Post List Item</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    /* @theme:start — keep in sync with prototype/tokens.css */
+    @theme {
+      --color-bg: oklch(0.985 0.005 250);
+      --color-surface: oklch(1 0 0);
+      --color-fg: oklch(0.18 0.02 260);
+      --color-muted: oklch(0.5 0.02 260);
+      --color-border: oklch(0.92 0.008 260);
+      --color-primary: oklch(0.38 0.16 260);
+      --color-primary-fg: oklch(0.99 0 0);
+      --color-accent: oklch(0.55 0.18 250);
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+      --radius: 0.25rem;
+    }
+    /* @theme:end */
+  </style>
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+    a { transition: color 120ms ease; }
+    .demo-cell { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1.5rem; }
+    .demo-snippet { background: color-mix(in oklch, var(--color-bg) 96%, var(--color-fg) 4%); padding: 0.75rem 1rem; border-radius: 0.375rem; font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.5; overflow-x: auto; color: var(--color-muted); white-space: pre; }
+    .display { letter-spacing: -0.025em; }
+  </style>
+</head>
+<body class="bg-bg text-fg font-sans antialiased">
+
+  <header class="border-b border-border px-6 py-3 flex items-center justify-between bg-surface text-sm shrink-0">
+    <div class="text-muted">
+      <a href="/" target="_top" class="hover:text-accent">&larr; Prototype</a>
+      <span class="mx-1.5">/</span>
+      <span>Components</span>
+      <span class="mx-1.5">/</span>
+      <span class="text-fg">Post List Item</span>
+    </div>
+    <div class="text-xs text-muted">Component spec</div>
+  </header>
+
+  <main class="flex-1 overflow-y-auto">
+
+    <section class="max-w-5xl mx-auto px-6 pt-10 pb-4">
+      <h1 class="text-3xl font-semibold tracking-tight mb-2">Post List Item</h1>
+      <p class="text-muted">Two-column row with a date in the left rail and title + summary + meta in the body. Title shifts to <code class="font-mono">accent</code> on hover via the parent group. Used in blog index, home "Latest writing", and the related-posts block on a blog post.</p>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 pb-10">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Variants</h2>
+      <div class="space-y-4">
+
+        <div class="demo-cell">
+          <p class="text-xs uppercase tracking-wider text-muted mb-3">Compact (home "Latest writing")</p>
+          <ul class="divide-y divide-border max-w-3xl mb-4">
+            <li class="py-5 grid grid-cols-[7rem_1fr] gap-6 group cursor-pointer"><a href="#" class="contents">
+              <span class="text-xs text-muted shrink-0 font-mono pt-1">2026-02-11</span>
+              <div>
+                <h3 class="text-lg font-semibold mb-1 group-hover:text-accent transition">Good metric, bad metric</h3>
+                <p class="text-sm text-muted leading-relaxed">A short field guide to picking metrics that actually move product decisions, not just dashboards.</p>
+              </div>
+            </a></li>
+          </ul>
+          <pre class="demo-snippet"><code>&lt;li class="py-5 grid grid-cols-[7rem_1fr] gap-6
+   group cursor-pointer"&gt;
+  &lt;a href="#/blog/post" class="contents"&gt;
+    &lt;span class="text-xs text-muted shrink-0
+       font-mono pt-1"&gt;2026-02-11&lt;/span&gt;
+    &lt;div&gt;
+      &lt;h3 class="text-lg font-semibold mb-1
+         group-hover:text-accent transition"&gt;
+        Good metric, bad metric
+      &lt;/h3&gt;
+      &lt;p class="text-sm text-muted
+         leading-relaxed"&gt;A short field guide…&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/a&gt;
+&lt;/li&gt;</code></pre>
+        </div>
+
+        <div class="demo-cell">
+          <p class="text-xs uppercase tracking-wider text-muted mb-3">Full (blog index)</p>
+          <ul class="divide-y divide-border max-w-3xl mb-4">
+            <li class="py-7 grid grid-cols-[7rem_1fr] gap-6 group cursor-pointer"><a href="#" class="contents">
+              <p class="font-mono text-xs text-muted pt-1.5">2026-02-11</p>
+              <div>
+                <h3 class="display text-2xl font-semibold mb-2 group-hover:text-accent transition">Good metric, bad metric</h3>
+                <p class="text-sm text-muted leading-relaxed mb-3 max-w-2xl">A short field guide to picking metrics that actually move product decisions, not just dashboards. Three questions I ask before adopting any new metric, and the patterns that consistently fail.</p>
+                <div class="flex items-center gap-3 text-xs text-muted">
+                  <span>5 min read</span><span>&middot;</span><span>PM</span><span>Data</span>
+                </div>
+              </div>
+            </a></li>
+          </ul>
+          <pre class="demo-snippet"><code>&lt;li data-tags="pm data"
+   class="py-7 grid grid-cols-[7rem_1fr] gap-6
+   group cursor-pointer"&gt;
+  &lt;a href="#/blog/post" class="contents"&gt;
+    &lt;p class="font-mono text-xs text-muted pt-1.5"&gt;
+      2026-02-11&lt;/p&gt;
+    &lt;div&gt;
+      &lt;h3 class="display text-2xl font-semibold mb-2
+         group-hover:text-accent transition"&gt;
+        Good metric, bad metric
+      &lt;/h3&gt;
+      &lt;p class="text-sm text-muted leading-relaxed
+         mb-3 max-w-2xl"&gt;A short field guide…&lt;/p&gt;
+      &lt;div class="flex items-center gap-3
+         text-xs text-muted"&gt;
+        &lt;span&gt;5 min read&lt;/span&gt;&lt;span&gt;&amp;middot;&lt;/span&gt;
+        &lt;span&gt;PM&lt;/span&gt;&lt;span&gt;Data&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/a&gt;
+&lt;/li&gt;</code></pre>
+        </div>
+
+        <div class="demo-cell">
+          <p class="text-xs uppercase tracking-wider text-muted mb-3">Related (blog post footer)</p>
+          <ul class="space-y-3 max-w-3xl mb-4">
+            <li><a href="#" class="block group cursor-pointer">
+              <span class="font-semibold group-hover:text-accent transition">How not to use data 101</span>
+              <span class="text-sm text-muted ml-2">&middot; common ways product teams misuse data</span>
+            </a></li>
+          </ul>
+          <pre class="demo-snippet"><code>&lt;li&gt;
+  &lt;a href="#/blog/post" class="block group cursor-pointer"&gt;
+    &lt;span class="font-semibold
+       group-hover:text-accent transition"&gt;
+      How not to use data 101&lt;/span&gt;
+    &lt;span class="text-sm text-muted ml-2"&gt;
+      &amp;middot; common ways product teams misuse data
+    &lt;/span&gt;
+  &lt;/a&gt;
+&lt;/li&gt;</code></pre>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 pb-10">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Responsive</h2>
+      <p class="text-sm text-muted leading-relaxed mb-3">The two-column grid (<code class="font-mono text-fg">grid-cols-[7rem_1fr]</code>) collapses to a single column below the <code class="font-mono text-fg">sm</code> breakpoint (640px). Date renders on its own line above the title; <code class="font-mono text-fg">gap-6</code> shrinks to <code class="font-mono text-fg">gap-1</code> (compact list) or <code class="font-mono text-fg">gap-2</code> (full list) so the date and title still read as one unit, not two stacked blocks.</p>
+      <pre class="demo-snippet"><code>&lt;li class="py-5 grid
+   grid-cols-1 sm:grid-cols-[7rem_1fr]
+   gap-1 sm:gap-6
+   group cursor-pointer"&gt;
+  ...
+&lt;/li&gt;</code></pre>
+      <p class="text-sm text-muted leading-relaxed mt-3">The "related" variant doesn't use a grid (it's already single-column), so it needs no responsive treatment.</p>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 pb-10">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Tokens</h2>
+      <ul class="text-sm space-y-1 text-muted">
+        <li><code class="font-mono text-fg">--color-fg</code> &mdash; title text</li>
+        <li><code class="font-mono text-fg">--color-muted</code> &mdash; date, summary, meta row</li>
+        <li><code class="font-mono text-fg">--color-accent</code> &mdash; title on hover (driven by <code class="font-mono">group-hover</code>)</li>
+        <li><code class="font-mono text-fg">--color-border</code> &mdash; row dividers</li>
+        <li><code class="font-mono text-fg">--font-mono</code> &mdash; date column</li>
+      </ul>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 pb-16">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Used in</h2>
+      <ul class="text-sm space-y-1">
+        <li><a href="../hi-fi/cool-minimal-v1.html#/home" target="_blank" class="text-fg hover:text-accent">Cool &amp; Minimal v1 &mdash; Home</a> <span class="text-muted">&middot; "Latest writing" (compact)</span></li>
+        <li><a href="../hi-fi/cool-minimal-v1.html#/blog" target="_blank" class="text-fg hover:text-accent">Cool &amp; Minimal v1 &mdash; Blog</a> <span class="text-muted">&middot; index list (full)</span></li>
+        <li><a href="../hi-fi/cool-minimal-v1.html#/blog/post" target="_blank" class="text-fg hover:text-accent">Cool &amp; Minimal v1 &mdash; Blog post</a> <span class="text-muted">&middot; "Related" footer (related variant)</span></li>
+        <li><a href="../hi-fi/cool-minimal-tag-filter-v1.html#/blog" target="_blank" class="text-fg hover:text-accent">Cool &amp; Minimal &mdash; Tag Filter v1 &mdash; Blog</a> <span class="text-muted">&middot; with <code class="font-mono">data-tags</code> for client-side filtering</span></li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-border px-6 py-2 text-xs text-muted bg-surface shrink-0">
+    Generated by <code class="font-mono">design-components</code> &middot; post-list-item
+  </footer>
+</body>
+</html>

@@ -48,6 +48,18 @@ If the user wants markdown PRD files rendered, that's a separate skill's job (a 
 ## Why This Is a Script, Not Inline Agent Work
 Regenerating the launcher is deterministic, runs every time a skill adds files, and benefits from being byte-identical across invocations. A bundled script gives downstream skills (`design-wireframes`, future style/hi-fi skills) a one-line shell command to call after they finish writing files — no agent reasoning required, no token spend, no drift in the launcher format.
 
+## Pipeline
+
+- **Reads from**: every artifact subdirectory under `prototype/` (PRD, CUJs, styles, wireframes, hi-fi, components, frames); `prototype/APPROVED`; `prototype/tokens.css` (for the inline @theme block in the launcher)
+- **Produces**: regenerated `prototype/index.html` (the launcher SPA shell)
+- **Called by**: every artifact-producing skill at the end of its run, plus on demand via the user
+
+## Iteration
+
+This skill is fully idempotent &mdash; running it 100 times produces the same launcher as running it once. The launcher reflects the current state of the filesystem + manifest, nothing more.
+
+If the SIDEBAR_SECTIONS structure or the launcher chrome itself needs to change, edit `regenerate.py` directly and re-run. Don't try to patch the generated `index.html` &mdash; the next regeneration will overwrite it.
+
 ## Why No Artifact-Listing Manifest
 An earlier version of this design used a `manifest.json` that every skill updated when adding artifacts. This created two problems: skills had to remember to update it (they sometimes wouldn't), and concurrent agents would conflict on the file. Filesystem rescanning at update time avoids both — the disk is the source of truth for *what artifacts exist*, and this script is the only thing that reads it.
 

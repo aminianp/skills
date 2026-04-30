@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Component: Button</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    /* @theme:start — keep in sync with prototype/tokens.css */
+    @theme {
+      --color-bg: oklch(0.985 0.005 250);
+      --color-surface: oklch(1 0 0);
+      --color-fg: oklch(0.18 0.02 260);
+      --color-muted: oklch(0.5 0.02 260);
+      --color-border: oklch(0.92 0.008 260);
+      --color-primary: oklch(0.38 0.16 260);
+      --color-primary-fg: oklch(0.99 0 0);
+      --color-accent: oklch(0.55 0.18 250);
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+      --radius: 0.25rem;
+    }
+    /* @theme:end */
+  </style>
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+    a, button { transition: color 120ms ease, background-color 120ms ease, border-color 120ms ease, opacity 120ms ease; }
+    .demo-cell { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1.5rem; }
+    .demo-snippet { background: color-mix(in oklch, var(--color-bg) 96%, var(--color-fg) 4%); padding: 0.75rem 1rem; border-radius: 0.375rem; font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.5; overflow-x: auto; color: var(--color-muted); white-space: pre; }
+  </style>
+</head>
+<body class="bg-bg text-fg font-sans antialiased">
+
+  <header class="border-b border-border px-6 py-3 flex items-center justify-between bg-surface text-sm shrink-0">
+    <div class="text-muted">
+      <a href="/" target="_top" class="hover:text-accent">&larr; Prototype</a>
+      <span class="mx-1.5">/</span>
+      <span>Components</span>
+      <span class="mx-1.5">/</span>
+      <span class="text-fg">Button</span>
+    </div>
+    <div class="text-xs text-muted">Component spec</div>
+  </header>
+
+  <main class="flex-1 overflow-y-auto">
+
+    <section class="max-w-5xl mx-auto px-6 pt-10 pb-4">
+      <h1 class="text-3xl font-semibold tracking-tight mb-2">Button</h1>
+      <p class="text-muted">Inline call-to-action used in heroes and section CTAs. Two visual variants &mdash; primary (filled) and secondary (outline).</p>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 pb-10">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Variants</h2>
+      <div class="grid grid-cols-2 gap-4">
+
+        <div class="demo-cell">
+          <p class="text-xs uppercase tracking-wider text-muted mb-3">Primary</p>
+          <div class="mb-4 flex items-center justify-center min-h-12">
+            <a class="bg-primary text-primary-fg rounded px-5 py-2.5 text-sm font-medium hover:opacity-90 cursor-pointer">See my work &rarr;</a>
+          </div>
+          <pre class="demo-snippet"><code>&lt;a class="bg-primary text-primary-fg rounded
+   px-5 py-2.5 text-sm font-medium
+   hover:opacity-90 cursor-pointer"&gt;
+  See my work &amp;rarr;
+&lt;/a&gt;</code></pre>
+        </div>
+
+        <div class="demo-cell">
+          <p class="text-xs uppercase tracking-wider text-muted mb-3">Secondary</p>
+          <div class="mb-4 flex items-center justify-center min-h-12">
+            <a class="bg-surface border border-border rounded px-5 py-2.5 text-sm font-medium hover:border-accent hover:text-accent cursor-pointer">Read the blog</a>
+          </div>
+          <pre class="demo-snippet"><code>&lt;a class="bg-surface border border-border
+   rounded px-5 py-2.5 text-sm font-medium
+   hover:border-accent hover:text-accent
+   cursor-pointer"&gt;
+  Read the blog
+&lt;/a&gt;</code></pre>
+        </div>
+
+        <div class="demo-cell">
+          <p class="text-xs uppercase tracking-wider text-muted mb-3">Primary, with trailing icon</p>
+          <div class="mb-4 flex items-center justify-center min-h-12">
+            <a class="bg-primary text-primary-fg rounded px-5 py-2.5 text-sm font-medium hover:opacity-90 cursor-pointer inline-flex items-center gap-1.5">LinkedIn <span class="text-xs opacity-80">&#x2197;</span></a>
+          </div>
+          <pre class="demo-snippet"><code>&lt;a class="bg-primary text-primary-fg rounded
+   px-5 py-2.5 text-sm font-medium
+   hover:opacity-90 cursor-pointer
+   inline-flex items-center gap-1.5"&gt;
+  LinkedIn
+  &lt;span class="text-xs opacity-80"&gt;&amp;#x2197;&lt;/span&gt;
+&lt;/a&gt;</code></pre>
+        </div>
+
+        <div class="demo-cell">
+          <p class="text-xs uppercase tracking-wider text-muted mb-3">Secondary, with metadata</p>
+          <div class="mb-4 flex items-center justify-center min-h-12">
+            <a class="bg-surface border border-border rounded px-5 py-2.5 text-sm font-medium hover:border-accent hover:text-accent cursor-pointer inline-flex items-center gap-1.5">Download Resume <span class="text-xs text-muted">PDF, 1pg</span></a>
+          </div>
+          <pre class="demo-snippet"><code>&lt;a class="bg-surface border border-border
+   rounded px-5 py-2.5 text-sm font-medium
+   hover:border-accent hover:text-accent
+   cursor-pointer inline-flex items-center gap-1.5"&gt;
+  Download Resume
+  &lt;span class="text-xs text-muted"&gt;PDF, 1pg&lt;/span&gt;
+&lt;/a&gt;</code></pre>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 pb-10">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Responsive: full-width stacked below sm</h2>
+      <p class="text-sm text-muted leading-relaxed mb-3">In a button group with two or more CTAs, stack vertically and fill the available width below the <code class="font-mono text-fg">sm</code> breakpoint (640px). Above sm, lay out inline. Bump button vertical padding from <code class="font-mono text-fg">py-2.5</code> to <code class="font-mono text-fg">py-3</code> on mobile so the touch target is at least 44px tall, the Apple HIG / Material minimum.</p>
+      <pre class="demo-snippet"><code>&lt;div class="flex flex-col sm:flex-row gap-3"&gt;
+  &lt;a class="bg-primary text-primary-fg rounded
+     px-5 py-3 sm:py-2.5
+     text-sm font-medium
+     hover:opacity-90 cursor-pointer
+     text-center"&gt;
+    See my work &amp;rarr;
+  &lt;/a&gt;
+  &lt;a class="bg-surface border border-border rounded
+     px-5 py-3 sm:py-2.5
+     text-sm font-medium
+     hover:border-accent hover:text-accent
+     cursor-pointer
+     text-center"&gt;
+    Read the blog
+  &lt;/a&gt;
+&lt;/div&gt;</code></pre>
+      <p class="text-sm text-muted leading-relaxed mt-3"><strong class="text-fg">Why full-width?</strong> Inline buttons next to each other on a phone either overflow horizontally, wrap their text awkwardly mid-label, or get squished to unreadable widths. Stacked + full-width gives each CTA equal weight, prevents text wrapping, and matches the comfortable-thumb-reach pattern used by every native app's primary action button.</p>
+      <p class="text-sm text-muted leading-relaxed mt-3"><strong class="text-fg">When NOT to stack:</strong> a single primary button on its own (no group) doesn't need full-width &mdash; <code class="font-mono text-fg">inline-block</code> at its natural width is fine. Stacking matters when there are two or more CTAs sharing a row.</p>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 pb-10">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Tokens</h2>
+      <ul class="text-sm space-y-1 text-muted">
+        <li><code class="font-mono text-fg">--color-primary</code> &mdash; primary fill</li>
+        <li><code class="font-mono text-fg">--color-primary-fg</code> &mdash; primary text</li>
+        <li><code class="font-mono text-fg">--color-surface</code> &mdash; secondary fill</li>
+        <li><code class="font-mono text-fg">--color-border</code> &mdash; secondary border (default)</li>
+        <li><code class="font-mono text-fg">--color-accent</code> &mdash; secondary border + text on hover</li>
+        <li><code class="font-mono text-fg">--radius</code> &mdash; corner radius (consumed via Tailwind <code class="font-mono text-fg">rounded</code>)</li>
+      </ul>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 pb-16">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Used in</h2>
+      <ul class="text-sm space-y-1">
+        <li><a href="../hi-fi/cool-minimal-v1.html#/home" target="_blank" class="text-fg hover:text-accent">Cool &amp; Minimal v1 &mdash; Home</a> <span class="text-muted">&middot; primary + secondary CTA pair</span></li>
+        <li><a href="../hi-fi/cool-minimal-v1.html#/work" target="_blank" class="text-fg hover:text-accent">Cool &amp; Minimal v1 &mdash; Work</a> <span class="text-muted">&middot; LinkedIn + Resume</span></li>
+        <li><a href="../hi-fi/cool-minimal-tag-filter-v1.html#/home" target="_blank" class="text-fg hover:text-accent">Cool &amp; Minimal &mdash; Tag Filter v1 &mdash; Home</a></li>
+        <li><a href="../hi-fi/cool-minimal-tag-filter-v1.html#/work" target="_blank" class="text-fg hover:text-accent">Cool &amp; Minimal &mdash; Tag Filter v1 &mdash; Work</a></li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-border px-6 py-2 text-xs text-muted bg-surface shrink-0">
+    Generated by <code class="font-mono">design-components</code> &middot; button
+  </footer>
+</body>
+</html>

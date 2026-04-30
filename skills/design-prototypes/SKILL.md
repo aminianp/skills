@@ -304,16 +304,52 @@ If the user has multiple prototypes, suggest opening them in adjacent tabs to co
 
 ## Marking a Prototype Approved
 
-When the user picks a variant as the standard ("let's go with v1", "this is the one", "this is the approved direction"), update the project's approval manifest at `prototype/APPROVED` so downstream skills (especially `design-components`) and the launcher know which prototype is the source of truth.
+When the user picks a variant as the standard ("let's go with v1", "this is the one"), call the approval script:
 
-Add or update the `prototype:` line with the relative path:
-
-```
-prototype: hi-fi/cool-minimal-v1.html
+```bash
+python3 ~/.claude/skills/prototype-update/scripts/bump_approval.py prototype/ prototype hi-fi/cool-minimal-v1.html
 ```
 
-Only one prototype is approved at a time &mdash; replacing the line replaces the approval. After updating, run `prototype-update` so the launcher renders a "✓ Selected" pill next to the matching item in the Prototypes list (and a green check next to the Prototypes sidebar label).
+Only one prototype is approved at a time &mdash; replacing the value replaces the approval. After updating, run `prototype-update`. See [Approval Protocol](../prototype-update/references/approval-protocol.md).
 
-Approving a prototype implicitly approves the components inside it, the theme it uses, and the flows it embodies. Downstream skills can rely on this transitively without asking again. If the user later switches their pick, just rewrite the line; if they un-pick everything for a moment, remove the line.
+Approving a prototype implicitly approves the components inside it, the theme it uses, and the flows it embodies. Once approved, any further edits to the file referenced by the manifest should trigger a `design-components` re-extraction &mdash; the prototype is the spec, components crystallize it, and they cannot drift.
 
-Once a prototype is approved and any further edits land on the file referenced by the manifest, run `design-components` to keep the component library in sync &mdash; the prototype is the spec, components crystallize it, and they cannot drift.
+## Accessibility floor
+
+For web targets, every prototype must clear a baseline. **Don't ship one that fails these.**
+
+- **Keyboard navigation:** every interactive element reachable via Tab in visual order. Don't trap focus except inside open modals/drawers (where you should explicitly trap it). Esc closes overlays.
+- **Visible focus:** every interactive element shows a `:focus-visible` ring. Don't remove default outlines without replacing them. Use `focus-visible:ring-2 ring-accent ring-offset-2` or equivalent.
+- **No hover-only affordances:** mobile has no hover. Anything important must work via tap/focus too. Hover-only menus, tooltips that hide critical info, only-visible-on-hover edit buttons &mdash; all anti-patterns.
+- **ARIA on interactive widgets:** the hamburger drawer needs `aria-expanded`, `aria-controls`, `aria-label`. Modals need `aria-modal="true"`. Tabs need `role="tablist"` etc. Use the W3C ARIA Authoring Practices reference (see Design References) for any non-button interactive widget.
+- **Don't convey state with color alone:** pair color cues with text, icon, or border weight (some users have color-vision differences). The "✓ Selected" pill in the launcher pairs color (accent) with a checkmark + text.
+- **Body text ≥ 16px on mobile.** Sub-16px triggers iOS Safari auto-zoom on input focus.
+- **Touch targets ≥ 44px** (Apple HIG) / 48px (Material). `py-3` minimum on mobile buttons.
+
+Validate the keyboard flow at each prototype review: tab through every page, confirm focus is always visible, confirm overlays trap focus and Esc closes them.
+
+## Pipeline
+
+- **Reads from**: aligned wireframes (`prototype/wireframes/`); active theme; `target:` from APPROVED
+- **Produces**: one or more interactive prototype variants in `prototype/hi-fi/`
+- **Feeds out to**: `design-components` (extracts reusable components from the approved variant); `implementation-brief`
+
+## Iteration
+
+Variants stack &mdash; new prototypes are added as siblings, not edits to the existing file. Naming convention: `<theme-or-variant-slug>-v<N>.html`.
+
+When the **approved prototype** is edited (the one referenced by the `prototype:` line in APPROVED), `design-components` must be re-run to keep the library in sync. Don't let them drift.
+
+When the user un-picks a prototype:
+
+```bash
+python3 ~/.claude/skills/prototype-update/scripts/bump_approval.py prototype/ prototype
+```
+
+The component library tied to the previously-approved prototype becomes stale (but isn't auto-deleted) &mdash; flag this to the user.
+
+## Worked examples
+
+- `references/responsive-starter.html` &mdash; bare SPA shell with hamburger drawer + hash routing + responsive base patterns. Copy-paste starting point for `target: web-spa`.
+- `references/hamburger-drawer.html` &mdash; just the drawer markup + JS, isolated from the rest of the prototype. Drop into an existing prototype that needs it.
+- `references/examples/cool-minimal-v1.html` &mdash; the full responsive prototype from pouyan.fyi: 4 hash-routed pages (Home / Work / Blog / Blog post), hamburger drawer below md, centered hero on mobile, full-width stacked CTAs. The canonical "what good looks like" for a small content-led site.

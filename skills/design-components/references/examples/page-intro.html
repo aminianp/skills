@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Component: Page Intro</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    /* @theme:start — keep in sync with prototype/tokens.css */
+    @theme {
+      --color-bg: oklch(0.985 0.005 250);
+      --color-surface: oklch(1 0 0);
+      --color-fg: oklch(0.18 0.02 260);
+      --color-muted: oklch(0.5 0.02 260);
+      --color-border: oklch(0.92 0.008 260);
+      --color-primary: oklch(0.38 0.16 260);
+      --color-primary-fg: oklch(0.99 0 0);
+      --color-accent: oklch(0.55 0.18 250);
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+      --radius: 0.25rem;
+    }
+    /* @theme:end */
+  </style>
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+    .demo-cell { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1.5rem; }
+    .demo-snippet { background: color-mix(in oklch, var(--color-bg) 96%, var(--color-fg) 4%); padding: 0.75rem 1rem; border-radius: 0.375rem; font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.5; overflow-x: auto; color: var(--color-muted); white-space: pre; }
+    .display { letter-spacing: -0.025em; }
+  </style>
+</head>
+<body class="bg-bg text-fg font-sans antialiased">
+
+  <header class="border-b border-border px-6 py-3 flex items-center justify-between bg-surface text-sm shrink-0">
+    <div class="text-muted">
+      <a href="/" target="_top" class="hover:text-accent">&larr; Prototype</a>
+      <span class="mx-1.5">/</span>
+      <span>Components</span>
+      <span class="mx-1.5">/</span>
+      <span class="text-fg">Page Intro</span>
+    </div>
+    <div class="text-xs text-muted">Component spec</div>
+  </header>
+
+  <main class="flex-1 overflow-y-auto">
+
+    <section class="max-w-5xl mx-auto px-6 pt-10 pb-4">
+      <h1 class="text-3xl font-semibold tracking-tight mb-2">Page Intro</h1>
+      <p class="text-muted">Three-part page header: small uppercase eyebrow, large display heading, supporting paragraph. Used at the top of every interior page (Work, Blog, Blog post). The Home variant is similar but pairs the intro with a photo on the side.</p>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 pb-10">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Variants</h2>
+      <div class="space-y-4">
+
+        <div class="demo-cell">
+          <p class="text-xs uppercase tracking-wider text-muted mb-3">Standard (Work, Blog)</p>
+          <div class="mb-4">
+            <p class="text-xs uppercase tracking-[0.2em] text-muted mb-3">Work</p>
+            <h1 class="display text-4xl font-semibold leading-[1.1] mb-4">Where I&rsquo;ve worked.</h1>
+            <p class="text-muted max-w-2xl leading-relaxed">A chronological summary. For full context, the LinkedIn profile is the most current source. The resume is a 1-pager you can drop into an ATS.</p>
+          </div>
+          <pre class="demo-snippet"><code>&lt;p class="text-xs uppercase tracking-[0.2em]
+   text-muted mb-3"&gt;Work&lt;/p&gt;
+&lt;h1 class="display text-4xl font-semibold
+   leading-[1.1] mb-4"&gt;
+  Where I&amp;rsquo;ve worked.
+&lt;/h1&gt;
+&lt;p class="text-muted max-w-2xl leading-relaxed"&gt;
+  A chronological summary. …
+&lt;/p&gt;
+
+/* page CSS */
+.display { letter-spacing: -0.025em; }</code></pre>
+        </div>
+
+        <div class="demo-cell">
+          <p class="text-xs uppercase tracking-wider text-muted mb-3">Blog post (with meta row)</p>
+          <div class="mb-4">
+            <p class="text-xs uppercase tracking-[0.2em] text-muted mb-3">Essay</p>
+            <h1 class="display text-5xl font-semibold leading-[1.05] mb-5">Good metric, bad metric</h1>
+            <div class="flex items-center gap-4 text-sm text-muted pb-6 border-b border-border">
+              <span class="font-mono">2026-02-11</span>
+              <span>&middot;</span>
+              <span>5 min read</span>
+              <span>&middot;</span>
+              <span>PM</span>
+              <span>Data</span>
+            </div>
+          </div>
+          <pre class="demo-snippet"><code>&lt;p class="text-xs uppercase tracking-[0.2em]
+   text-muted mb-3"&gt;Essay&lt;/p&gt;
+&lt;h1 class="display text-5xl font-semibold
+   leading-[1.05] mb-5"&gt;Good metric, bad metric&lt;/h1&gt;
+&lt;div class="flex items-center gap-4 text-sm
+   text-muted pb-6 border-b border-border"&gt;
+  &lt;span class="font-mono"&gt;2026-02-11&lt;/span&gt;
+  &lt;span&gt;&amp;middot;&lt;/span&gt;
+  &lt;span&gt;5 min read&lt;/span&gt;
+  …
+&lt;/div&gt;</code></pre>
+        </div>
+
+        <div class="demo-cell">
+          <p class="text-xs uppercase tracking-wider text-muted mb-3">Hero (Home — paired with photo)</p>
+          <div class="mb-4">
+            <p class="text-xs uppercase tracking-[0.2em] text-muted mb-3">Pouyan Aminian</p>
+            <h1 class="display text-5xl font-semibold leading-[1.05] mb-6">Product manager working on data, AI, and growth.</h1>
+            <p class="text-lg text-muted leading-relaxed max-w-xl">Currently at Databricks. Previously at Meta, Microsoft, Tailscale, and Wherobots.</p>
+          </div>
+          <pre class="demo-snippet"><code>/* same shape, but text-5xl + body uses
+   text-lg for hero emphasis. Pair with the
+   photo-disc element to the side. */</code></pre>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 pb-10">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Responsive</h2>
+      <p class="text-sm text-muted leading-relaxed mb-3">Headings shrink at the <code class="font-mono text-fg">sm</code> breakpoint (640px): the standard variant goes <code class="font-mono text-fg">text-3xl &rarr; sm:text-4xl</code>, the blog-post variant goes <code class="font-mono text-fg">text-3xl &rarr; sm:text-5xl</code>. Section padding and bottom margins also halve on mobile (<code class="font-mono text-fg">pt-10 sm:pt-20</code>, <code class="font-mono text-fg">mb-6 sm:mb-8</code>). Line-height softens from a tight <code class="font-mono text-fg">leading-[1.05]</code> down to <code class="font-mono text-fg">leading-tight</code> on mobile so wrapped lines don't crash into each other at smaller font sizes.</p>
+      <pre class="demo-snippet"><code>&lt;p class="text-xs uppercase tracking-[0.2em]
+   text-muted mb-3"&gt;Work&lt;/p&gt;
+&lt;h1 class="display
+   text-3xl sm:text-4xl
+   font-semibold
+   leading-tight sm:leading-[1.1]
+   mb-4"&gt;
+  Where I&amp;rsquo;ve worked.
+&lt;/h1&gt;
+&lt;p class="text-muted mb-6 sm:mb-8
+   max-w-2xl leading-relaxed"&gt;
+  A chronological summary. …
+&lt;/p&gt;</code></pre>
+      <p class="text-sm text-muted leading-relaxed mt-3">The hero variant on the home page also stacks &mdash; photo on top, text below &mdash; at sub-<code class="font-mono text-fg">sm</code> widths. Photo disc shrinks from <code class="font-mono text-fg">w-40 h-40</code> to <code class="font-mono text-fg">w-24 h-24</code>.</p>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 pb-10">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Tokens</h2>
+      <ul class="text-sm space-y-1 text-muted">
+        <li><code class="font-mono text-fg">--color-muted</code> &mdash; eyebrow, body</li>
+        <li><code class="font-mono text-fg">--color-fg</code> &mdash; heading</li>
+        <li><code class="font-mono text-fg">--color-border</code> &mdash; meta-row underline (blog post variant only)</li>
+        <li><code class="font-mono text-fg">tracking-[0.2em]</code> &mdash; eyebrow letter-spacing (literal value, not tokenized)</li>
+        <li><code class="font-mono text-fg">.display</code> &mdash; heading letter-spacing -0.025em</li>
+      </ul>
+    </section>
+
+    <section class="max-w-5xl mx-auto px-6 pb-16">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Used in</h2>
+      <ul class="text-sm space-y-1">
+        <li><a href="../hi-fi/cool-minimal-v1.html#/home" target="_blank" class="text-fg hover:text-accent">Cool &amp; Minimal v1 &mdash; Home</a> <span class="text-muted">&middot; hero variant</span></li>
+        <li><a href="../hi-fi/cool-minimal-v1.html#/work" target="_blank" class="text-fg hover:text-accent">Cool &amp; Minimal v1 &mdash; Work</a> <span class="text-muted">&middot; standard</span></li>
+        <li><a href="../hi-fi/cool-minimal-v1.html#/blog" target="_blank" class="text-fg hover:text-accent">Cool &amp; Minimal v1 &mdash; Blog</a> <span class="text-muted">&middot; standard</span></li>
+        <li><a href="../hi-fi/cool-minimal-v1.html#/blog/post" target="_blank" class="text-fg hover:text-accent">Cool &amp; Minimal v1 &mdash; Blog post</a> <span class="text-muted">&middot; with meta row</span></li>
+        <li><a href="../hi-fi/cool-minimal-tag-filter-v1.html#/home" target="_blank" class="text-fg hover:text-accent">Cool &amp; Minimal &mdash; Tag Filter v1</a> <span class="text-muted">&middot; same four placements</span></li>
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-border px-6 py-2 text-xs text-muted bg-surface shrink-0">
+    Generated by <code class="font-mono">design-components</code> &middot; page-intro
+  </footer>
+</body>
+</html>

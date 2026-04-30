@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<!--
+  Canonical template for a component-library page (one component per file
+  in prototype/components/).
+
+  TO USE:
+    1. Copy this file to prototype/components/<component-slug>.html
+    2. Replace placeholder text in <title>, <h1>, the description paragraph,
+       and the breadcrumb label
+    3. Fill in the Variants / States / Dynamic states / Responsive sections
+       with live examples and escaped HTML snippets
+    4. List the design tokens the component consumes
+    5. List the prototypes (and their hash routes) where the component appears
+    6. Run prototype-update to regenerate the launcher
+
+  EVERY COMPONENT FILE FOLLOWS THIS SHAPE:
+    - Header chrome (back to launcher / breadcrumb)
+    - Title + 1-line description
+    - Variants — visual flavors (primary/secondary, with/without icon)
+    - States — interaction states, IF the component is interactive
+    - Dynamic states — loading/empty/error, IF the component wraps async content
+    - Responsive — what changes at breakpoints, ONLY IF anything changes
+    - Tokens — design tokens consumed (cross-ref to tokens.css)
+    - Used in — backlinks to prototypes (open in new tab)
+    - Footer attribution
+
+  Sections marked OPTIONAL above can be omitted on simple components (a static
+  pill doesn't need States; a button doesn't need Dynamic states; an icon-link
+  doesn't need Responsive).
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Component: <!-- COMPONENT NAME --></title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    /* @theme:start — keep in sync with prototype/tokens.css */
+    @theme {
+      --color-bg: oklch(0.99 0 0);
+      --color-surface: oklch(1 0 0);
+      --color-fg: oklch(0.18 0 0);
+      --color-muted: oklch(0.5 0 0);
+      --color-border: oklch(0.92 0 0);
+      --color-primary: oklch(0.28 0 0);
+      --color-primary-fg: oklch(0.99 0 0);
+      --color-accent: oklch(0.55 0 0);
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "SF Mono", Menlo, Consolas, monospace;
+      --radius: 0.375rem;
+    }
+    /* @theme:end */
+  </style>
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+    a, button { transition: color 120ms ease, background-color 120ms ease, border-color 120ms ease, opacity 120ms ease; }
+    .demo-cell { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 0.5rem; padding: 1.5rem; }
+    .demo-snippet { background: color-mix(in oklch, var(--color-bg) 96%, var(--color-fg) 4%); padding: 0.75rem 1rem; border-radius: 0.375rem; font-family: var(--font-mono); font-size: 0.72rem; line-height: 1.5; overflow-x: auto; color: var(--color-muted); white-space: pre; }
+    /* COMPONENT-SPECIFIC CSS goes here (e.g., .tag-active, .nav-link[data-active], etc.) */
+  </style>
+</head>
+<body class="bg-bg text-fg font-sans antialiased">
+
+  <!-- Header chrome: breadcrumb back to the launcher -->
+  <header class="border-b border-border px-6 py-3 flex items-center justify-between bg-surface text-sm shrink-0">
+    <div class="text-muted">
+      <a href="/" target="_top" class="hover:text-accent">&larr; Prototype</a>
+      <span class="mx-1.5">/</span>
+      <span>Components</span>
+      <span class="mx-1.5">/</span>
+      <span class="text-fg"><!-- COMPONENT NAME --></span>
+    </div>
+    <div class="text-xs text-muted">Component spec</div>
+  </header>
+
+  <main class="flex-1 overflow-y-auto">
+
+    <!-- Title + 1-line description -->
+    <section class="max-w-5xl mx-auto px-6 pt-10 pb-4">
+      <h1 class="text-3xl font-semibold tracking-tight mb-2"><!-- COMPONENT NAME --></h1>
+      <p class="text-muted"><!-- One-line description: what it is, where it's used. --></p>
+    </section>
+
+    <!-- VARIANTS — visual flavors of the same component -->
+    <section class="max-w-5xl mx-auto px-6 pb-10">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Variants</h2>
+      <div class="grid grid-cols-2 gap-4">
+
+        <div class="demo-cell">
+          <p class="text-xs uppercase tracking-wider text-muted mb-3">Variant name</p>
+          <div class="mb-4 flex items-center justify-center min-h-12">
+            <!-- LIVE EXAMPLE here -->
+          </div>
+          <pre class="demo-snippet"><code><!-- ESCAPED HTML SNIPPET here --></code></pre>
+        </div>
+
+        <!-- More variant cells -->
+
+      </div>
+    </section>
+
+    <!-- STATES — only on interactive components.
+         See references/component-states.md for the full taxonomy.
+         Document: default, hover, focus, active, disabled. -->
+    <!--
+    <section class="max-w-5xl mx-auto px-6 pb-10">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">States</h2>
+      <div class="grid grid-cols-2 gap-4">
+        ... cells for default / hover / focus / active / disabled ...
+      </div>
+    </section>
+    -->
+
+    <!-- DYNAMIC STATES — only on components wrapping async content (lists, forms).
+         Document: loading, empty, error, partial. -->
+    <!--
+    <section class="max-w-5xl mx-auto px-6 pb-10">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Dynamic states</h2>
+      <div class="grid grid-cols-1 gap-4">
+        ... loading skeleton / empty state / error state / partial pagination ...
+      </div>
+    </section>
+    -->
+
+    <!-- RESPONSIVE — only if layout actually changes at a breakpoint.
+         Skip this section on components that look the same at every viewport. -->
+    <!--
+    <section class="max-w-5xl mx-auto px-6 pb-10">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Responsive</h2>
+      <p class="text-sm text-muted leading-relaxed mb-3">
+        Below the <code class="font-mono text-fg">sm</code> breakpoint (640px), …
+      </p>
+      <pre class="demo-snippet"><code>... escaped class string showing responsive prefixes ...</code></pre>
+    </section>
+    -->
+
+    <!-- TOKENS — design tokens this component consumes -->
+    <section class="max-w-5xl mx-auto px-6 pb-10">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Tokens</h2>
+      <ul class="text-sm space-y-1 text-muted">
+        <li><code class="font-mono text-fg">--color-fg</code> &mdash; <!-- what it's used for --></li>
+        <!-- More token rows -->
+      </ul>
+    </section>
+
+    <!-- USED IN — backlinks to prototypes that consume this component.
+         Open in a new tab so the launcher state stays put. -->
+    <section class="max-w-5xl mx-auto px-6 pb-16">
+      <h2 class="text-xs uppercase tracking-wider text-muted mb-4">Used in</h2>
+      <ul class="text-sm space-y-1">
+        <li>
+          <a href="../hi-fi/<!-- variant -->.html#/<!-- route -->" target="_blank" class="text-fg hover:text-accent">
+            <!-- Prototype name &mdash; Page -->
+          </a>
+          <span class="text-muted">&middot; <!-- where on that page --></span>
+        </li>
+        <!-- More backlinks -->
+      </ul>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-border px-6 py-2 text-xs text-muted bg-surface shrink-0">
+    Generated by <code class="font-mono">design-components</code> &middot; <!-- component-slug -->
+  </footer>
+</body>
+</html>

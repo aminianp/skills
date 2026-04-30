@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thought Leadership: Blog post</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    /* @theme:start — keep in sync with prototype/tokens.css */
+    @theme {
+      --color-bg: oklch(0.985 0.005 250);
+      --color-surface: oklch(1 0 0);
+      --color-fg: oklch(0.18 0.02 260);
+      --color-muted: oklch(0.5 0.02 260);
+      --color-border: oklch(0.92 0.008 260);
+      --color-primary: oklch(0.38 0.16 260);
+      --color-primary-fg: oklch(0.99 0 0);
+      --color-accent: oklch(0.55 0.18 250);
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+      --radius: 0.25rem;
+    }
+    /* @theme:end */
+  </style>
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+    .post-body p { margin-bottom: 1.1em; line-height: 1.7; }
+    .post-body h2 { font-size: 1.4rem; font-weight: 600; margin: 2rem 0 0.75rem; letter-spacing: -0.01em; }
+    .post-body blockquote { border-left: 3px solid var(--color-accent); padding-left: 1em; margin: 1em 0; color: var(--color-muted); }
+    .post-body code { background: color-mix(in oklch, var(--color-bg) 88%, var(--color-fg) 12%); padding: 0.1em 0.35em; border-radius: 0.25em; font-size: 0.9em; font-family: var(--font-mono); }
+  </style>
+</head>
+<body class="bg-bg text-fg font-sans antialiased">
+
+  <header class="border-b border-border px-6 py-3 flex items-center justify-between bg-surface text-sm shrink-0">
+    <div class="text-muted">
+      <a href="/" target="_top" class="hover:text-accent">&larr; Prototype</a>
+      <span class="mx-1.5">/</span>
+      <span>Wireframes</span>
+      <span class="mx-1.5">/</span>
+      <span class="text-fg">Thought Leadership: Blog post</span>
+    </div>
+    <div class="text-xs text-muted">CUJ: Thought Leadership (2 of 2)</div>
+  </header>
+
+  <main class="flex-1 overflow-y-auto">
+
+    <!-- Top nav -->
+    <nav class="border-b border-border bg-surface">
+      <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+        <a class="font-semibold tracking-tight text-base">pouyan.fyi</a>
+        <div class="flex items-center gap-6 text-sm">
+          <a class="text-muted hover:text-fg cursor-pointer">Home</a>
+          <a class="text-muted hover:text-fg cursor-pointer">Work</a>
+          <a class="text-fg font-medium border-b-2 border-accent pb-0.5">Blog</a>
+          <span class="border-l border-border h-4"></span>
+          <a class="text-muted hover:text-accent cursor-pointer text-xs">GitHub</a>
+          <a class="text-muted hover:text-accent cursor-pointer text-xs">LinkedIn</a>
+          <a class="text-muted hover:text-accent cursor-pointer text-xs">X</a>
+          <a class="text-muted hover:text-accent cursor-pointer text-xs">Email</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Post -->
+    <article class="max-w-2xl mx-auto px-6 pt-12 pb-16">
+
+      <!-- Back to index -->
+      <p class="text-sm text-muted mb-8"><a class="hover:text-accent cursor-pointer">&larr; All posts</a></p>
+
+      <!-- Post metadata + title -->
+      <p class="text-xs uppercase tracking-wider text-muted mb-2">Essay</p>
+      <h1 class="text-4xl font-semibold tracking-tight leading-tight mb-4">Good metric, bad metric</h1>
+      <div class="flex items-center gap-4 text-sm text-muted mb-10 pb-6 border-b border-border">
+        <span class="font-mono">2026-02-11</span>
+        <span>&middot;</span>
+        <span>5 min read</span>
+        <span>&middot;</span>
+        <a class="hover:text-accent cursor-pointer">PM</a>
+        <a class="hover:text-accent cursor-pointer">Data</a>
+      </div>
+
+      <!-- Post body (placeholder content) -->
+      <div class="post-body text-fg">
+        <p class="text-lg text-muted">A short field guide to picking metrics that actually move product decisions, not just dashboards.</p>
+
+        <p>Every product team has a metrics problem, and almost none of them know it. The ones that do recognize it have usually graduated past the symptoms &mdash; the dashboards no one looks at, the OKRs that don&rsquo;t change behavior, the weekly reviews that become rituals &mdash; and started asking the harder question: which of these numbers, if it moved, would change what we decide to do tomorrow?</p>
+
+        <p>That&rsquo;s the bar I want to set: a metric is only useful if it can plausibly change a decision. Everything else is decoration.</p>
+
+        <h2>The three questions</h2>
+        <p>Before I adopt any new metric &mdash; whether it&rsquo;s for an OKR, a dashboard, or a single experiment &mdash; I run it through three questions:</p>
+
+        <p><strong>Can I name the decision it informs?</strong> Not "improve user engagement," not "track health." A specific, near-term call I&rsquo;ll have to make. If the metric drops 20%, what changes? If I can&rsquo;t answer that, the metric is decoration.</p>
+
+        <p><strong>Is it directional, or is it absolute?</strong> "Active users" is absolute and almost always misleading. "Active users week-over-week, normalized for marketing spend" is directional. The point of a metric isn&rsquo;t to know how big you are; it&rsquo;s to know which way you&rsquo;re heading.</p>
+
+        <p><strong>Could the metric move without the underlying thing actually moving?</strong> This is the goodhart trap. If your metric can be gamed by surface changes &mdash; renaming a feature, lowering a threshold, removing a confirmation step &mdash; then improvements to the metric will routinely come without the user actually being better off.</p>
+
+        <blockquote>The patterns that consistently fail, in my experience: vanity counters with no denominator, retention metrics measured on too short a window, and any metric that survives a re-org because nobody&rsquo;s sure what it means anymore.</blockquote>
+
+        <h2>What good looks like</h2>
+        <p>The teams I&rsquo;ve seen do this well share a few things. They have a small dashboard &mdash; usually fewer than ten metrics &mdash; and they review it religiously. They retire metrics aggressively when they stop being useful. And critically, they&rsquo;re willing to say "we don&rsquo;t measure that yet" instead of inventing a proxy and committing to it.</p>
+
+        <p>If you can&rsquo;t do all three, you don&rsquo;t have a metrics problem. You have a decision-making problem dressed up in numbers.</p>
+      </div>
+
+      <!-- Related posts -->
+      <div class="mt-16 pt-8 border-t border-border">
+        <h3 class="text-xs uppercase tracking-wider text-muted mb-4">Related</h3>
+        <ul class="space-y-2">
+          <li>
+            <a class="hover:text-accent cursor-pointer block">
+              <span class="font-medium">How not to use data 101</span>
+              <span class="text-sm text-muted ml-2">&middot; common ways product teams misuse data</span>
+            </a>
+          </li>
+          <li>
+            <a class="hover:text-accent cursor-pointer block">
+              <span class="font-medium">The North Star metric is overrated</span>
+              <span class="text-sm text-muted ml-2">&middot; why a small dashboard often beats one headline number</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </article>
+
+    <!-- Site footer -->
+    <footer class="border-t border-border bg-surface">
+      <div class="max-w-4xl mx-auto px-6 py-8 flex items-center justify-between text-sm text-muted">
+        <span>&copy; 2026 Pouyan Aminian</span>
+        <div class="flex gap-4">
+          <a class="hover:text-accent cursor-pointer">GitHub</a>
+          <a class="hover:text-accent cursor-pointer">LinkedIn</a>
+          <a class="hover:text-accent cursor-pointer">X</a>
+          <a class="hover:text-accent cursor-pointer">Email</a>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <footer class="border-t border-border px-6 py-2 text-xs text-muted bg-surface shrink-0">
+    Generated by <code class="font-mono">design-wireframes</code> &middot; CUJ: Thought Leadership (2 of 2)
+  </footer>
+</body>
+</html>

@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prototype: Cool & Minimal v1</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    /* @theme:start — keep in sync with prototype/tokens.css */
+    @theme {
+      --color-bg: oklch(0.985 0.005 250);
+      --color-surface: oklch(1 0 0);
+      --color-fg: oklch(0.18 0.02 260);
+      --color-muted: oklch(0.5 0.02 260);
+      --color-border: oklch(0.92 0.008 260);
+      --color-primary: oklch(0.38 0.16 260);
+      --color-primary-fg: oklch(0.99 0 0);
+      --color-accent: oklch(0.55 0.18 250);
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+      --radius: 0.25rem;
+    }
+    /* @theme:end */
+  </style>
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+    a, button, [class*="hover:"] { transition: color 120ms ease, background-color 120ms ease, border-color 120ms ease, opacity 120ms ease; }
+    .display { letter-spacing: -0.025em; }
+    .photo-disc { background: linear-gradient(135deg, color-mix(in oklch, var(--color-primary) 70%, var(--color-accent) 30%), var(--color-primary)); }
+    .logo-tile { background: linear-gradient(135deg, color-mix(in oklch, var(--color-primary) 65%, var(--color-accent) 35%), var(--color-primary)); color: var(--color-primary-fg); }
+    .nav-link[data-active="true"] { color: var(--color-fg); font-weight: 500; }
+    .nav-link[data-active="true"]::after { content: ''; position: absolute; left: 0; right: 0; bottom: -4px; height: 2px; background: var(--color-accent); }
+    .post-body p { margin-bottom: 1.25em; line-height: 1.75; font-size: 1.05rem; }
+    .post-body h2 { font-size: 1.5rem; font-weight: 600; margin: 2.5rem 0 0.75rem; letter-spacing: -0.02em; }
+    .post-body blockquote { border-left: 3px solid var(--color-accent); padding: 0.4em 0 0.4em 1.25em; margin: 1.5em 0; color: var(--color-muted); font-style: italic; }
+    .post-body strong { color: var(--color-fg); }
+    .tag-active { background: color-mix(in oklch, var(--color-fg) 8%, transparent); color: var(--color-fg); border-color: var(--color-fg); font-weight: 500; }
+    .icon-link { display: inline-flex; align-items: center; justify-content: center; }
+    .icon-link svg { display: block; }
+    .drawer-link { transition: color 120ms ease; }
+    .drawer-link:hover, .drawer-link:focus { color: var(--color-accent); outline: none; }
+  </style>
+</head>
+<body class="bg-bg text-fg font-sans antialiased">
+
+  <!-- Prototype chrome (back to launcher) -->
+  <header class="border-b border-border px-6 py-3 flex items-center justify-between bg-surface text-sm shrink-0">
+    <div class="text-muted">
+      <a href="/" target="_top" class="hover:text-accent">&larr; Prototype</a>
+      <span class="mx-1.5">/</span>
+      <span>Prototypes</span>
+      <span class="mx-1.5">/</span>
+      <span class="text-fg">Cool &amp; Minimal v1</span>
+    </div>
+    <div class="text-xs text-muted hidden sm:block">Interactive &middot; click nav to navigate</div>
+  </header>
+
+  <main class="flex-1 overflow-y-auto">
+
+    <!-- ============================================================ -->
+    <!-- SITE NAV — hamburger below md, inline above                  -->
+    <!-- ============================================================ -->
+    <nav class="border-b border-border bg-surface sticky top-0 z-10 backdrop-blur">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+        <a href="#/home" class="font-semibold tracking-tight">pouyan.fyi</a>
+
+        <!-- Hamburger toggle (mobile) -->
+        <button id="nav-toggle" class="md:hidden -mr-2 p-2 text-fg cursor-pointer rounded hover:bg-border/40" aria-label="Open menu" aria-expanded="false" aria-controls="nav-drawer">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="7" x2="19" y2="7"/>
+            <line x1="3" y1="11" x2="19" y2="11"/>
+            <line x1="3" y1="15" x2="19" y2="15"/>
+          </svg>
+        </button>
+
+        <!-- Inline nav (md+) -->
+        <div class="hidden md:flex items-center gap-7 text-sm">
+          <a href="#/home" class="nav-link relative text-muted hover:text-fg cursor-pointer" data-nav="home">Home</a>
+          <a href="#/work" class="nav-link relative text-muted hover:text-fg cursor-pointer" data-nav="work">Work</a>
+          <a href="#/blog" class="nav-link relative text-muted hover:text-fg cursor-pointer" data-nav="blog">Blog</a>
+          <span class="border-l border-border h-4"></span>
+          <div class="flex items-center gap-4">
+            <a class="icon-link text-muted hover:text-accent cursor-pointer" aria-label="GitHub" title="GitHub">
+              <svg viewBox="0 0 16 16" fill="currentColor" width="18" height="18"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+            </a>
+            <a class="icon-link text-muted hover:text-accent cursor-pointer" aria-label="LinkedIn" title="LinkedIn">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.27c-.97 0-1.75-.79-1.75-1.76s.78-1.76 1.75-1.76 1.75.79 1.75 1.76-.78 1.76-1.75 1.76zm13.5 12.27h-3v-5.6c0-3.37-4-3.11-4 0v5.6h-3v-11h3v1.76c1.4-2.59 7-2.78 7 2.48v6.76z"/></svg>
+            </a>
+            <a class="icon-link text-muted hover:text-accent cursor-pointer" aria-label="X (Twitter)" title="X">
+              <svg viewBox="0 0 24 24" fill="currentColor" width="17" height="17"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+            </a>
+            <a class="icon-link text-muted hover:text-accent cursor-pointer" aria-label="Email" title="Email">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Mobile drawer (full-screen overlay; hidden until hamburger toggled) -->
+    <div id="nav-drawer" class="md:hidden fixed inset-0 z-30 bg-bg flex flex-col" hidden>
+      <div class="border-b border-border px-4 py-3 flex items-center justify-between shrink-0">
+        <a href="#/home" data-nav-drawer-link class="font-semibold tracking-tight">pouyan.fyi</a>
+        <button id="nav-close" class="-mr-2 p-2 text-fg cursor-pointer rounded hover:bg-border/40" aria-label="Close menu">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="6" y1="6" x2="16" y2="16"/>
+            <line x1="16" y1="6" x2="6" y2="16"/>
+          </svg>
+        </button>
+      </div>
+      <nav class="flex-1 px-6 py-10 flex flex-col gap-1">
+        <a href="#/home" data-nav-drawer-link class="drawer-link display text-3xl font-semibold py-3 text-fg">Home</a>
+        <a href="#/work" data-nav-drawer-link class="drawer-link display text-3xl font-semibold py-3 text-fg">Work</a>
+        <a href="#/blog" data-nav-drawer-link class="drawer-link display text-3xl font-semibold py-3 text-fg">Blog</a>
+      </nav>
+      <div class="border-t border-border px-6 py-5 flex gap-6 items-center text-muted shrink-0">
+        <a class="icon-link hover:text-accent cursor-pointer" aria-label="GitHub" title="GitHub">
+          <svg viewBox="0 0 16 16" fill="currentColor" width="22" height="22"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        </a>
+        <a class="icon-link hover:text-accent cursor-pointer" aria-label="LinkedIn" title="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="22" height="22"><path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.27c-.97 0-1.75-.79-1.75-1.76s.78-1.76 1.75-1.76 1.75.79 1.75 1.76-.78 1.76-1.75 1.76zm13.5 12.27h-3v-5.6c0-3.37-4-3.11-4 0v5.6h-3v-11h3v1.76c1.4-2.59 7-2.78 7 2.48v6.76z"/></svg>
+        </a>
+        <a class="icon-link hover:text-accent cursor-pointer" aria-label="X (Twitter)" title="X">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+        </a>
+        <a class="icon-link hover:text-accent cursor-pointer" aria-label="Email" title="Email">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PAGE: Home                                                   -->
+    <!-- ============================================================ -->
+    <div data-page="home">
+
+      <section class="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-24">
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-12">
+          <div class="photo-disc shrink-0 w-24 h-24 sm:w-40 sm:h-40 rounded-full flex items-center justify-center text-3xl sm:text-5xl font-bold text-primary-fg" style="letter-spacing: -0.02em;">PA</div>
+          <div class="flex-1 w-full text-center sm:text-left sm:pt-2">
+            <p class="text-xs uppercase tracking-[0.2em] text-muted mb-3">Pouyan Aminian</p>
+            <h1 class="display text-3xl sm:text-5xl font-semibold leading-tight sm:leading-[1.05] mb-4 sm:mb-6">Product manager working on data, AI, and growth.</h1>
+            <p class="text-base sm:text-lg text-muted leading-relaxed mb-6 sm:mb-8 max-w-xl mx-auto sm:mx-0">Currently at Databricks. Previously at Meta, Microsoft, Tailscale, and Wherobots. I write about how product teams actually use data and AI &mdash; not how they pretend to.</p>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <a href="#/work" class="bg-primary text-primary-fg rounded px-5 py-3 sm:py-2.5 text-sm font-medium hover:opacity-90 cursor-pointer text-center">See my work &rarr;</a>
+              <a href="#/blog" class="bg-surface border border-border rounded px-5 py-3 sm:py-2.5 text-sm font-medium hover:border-accent hover:text-accent cursor-pointer text-center">Read the blog</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="border-t border-border bg-surface">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+          <h2 class="text-xs uppercase tracking-[0.2em] text-muted mb-5 text-center sm:text-left">What I think about</h2>
+          <div class="flex flex-wrap justify-center sm:justify-start gap-2.5">
+            <span class="px-3 py-1 rounded-full border border-border text-sm bg-bg cursor-default">Product management</span>
+            <span class="px-3 py-1 rounded-full border border-border text-sm bg-bg cursor-default">Data products</span>
+            <span class="px-3 py-1 rounded-full border border-border text-sm bg-bg cursor-default">Applied AI</span>
+            <span class="px-3 py-1 rounded-full border border-border text-sm bg-bg cursor-default">Growth</span>
+            <span class="px-3 py-1 rounded-full border border-border text-sm bg-bg cursor-default">Org design</span>
+            <span class="px-3 py-1 rounded-full border border-border text-sm bg-bg cursor-default">Developer tools</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="border-t border-border">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-14">
+          <div class="flex items-baseline justify-between mb-6">
+            <h2 class="text-xs uppercase tracking-[0.2em] text-muted">Latest writing</h2>
+            <a href="#/blog" class="text-sm text-muted hover:text-accent cursor-pointer">All posts &rarr;</a>
+          </div>
+          <ul class="divide-y divide-border">
+            <li class="py-5 grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-1 sm:gap-6 group cursor-pointer"><a href="#/blog/post" class="contents">
+              <span class="text-xs text-muted shrink-0 font-mono sm:pt-1">2026-02-11</span>
+              <div>
+                <h3 class="text-lg font-semibold mb-1 group-hover:text-accent transition">Good metric, bad metric</h3>
+                <p class="text-sm text-muted leading-relaxed">A short field guide to picking metrics that actually move product decisions, not just dashboards.</p>
+              </div>
+            </a></li>
+            <li class="py-5 grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-1 sm:gap-6 group cursor-pointer"><a href="#/blog/post" class="contents">
+              <span class="text-xs text-muted shrink-0 font-mono sm:pt-1">2026-01-22</span>
+              <div>
+                <h3 class="text-lg font-semibold mb-1 group-hover:text-accent transition">How not to use data 101</h3>
+                <p class="text-sm text-muted leading-relaxed">Common ways teams misuse data &mdash; and what to do instead.</p>
+              </div>
+            </a></li>
+            <li class="py-5 grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-1 sm:gap-6 group cursor-pointer"><a href="#/blog/post" class="contents">
+              <span class="text-xs text-muted shrink-0 font-mono sm:pt-1">2025-12-04</span>
+              <div>
+                <h3 class="text-lg font-semibold mb-1 group-hover:text-accent transition">When to build, when to buy: a PM&rsquo;s framework</h3>
+                <p class="text-sm text-muted leading-relaxed">Three questions I run through before every build-vs-buy call.</p>
+              </div>
+            </a></li>
+          </ul>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PAGE: Work                                                   -->
+    <!-- ============================================================ -->
+    <div data-page="work" hidden>
+
+      <section class="max-w-5xl mx-auto px-4 sm:px-6 pt-10 sm:pt-20 pb-6 sm:pb-10 text-center sm:text-left">
+        <p class="text-xs uppercase tracking-[0.2em] text-muted mb-3">Work</p>
+        <h1 class="display text-3xl sm:text-4xl font-semibold leading-tight sm:leading-[1.1] mb-4">Where I&rsquo;ve worked.</h1>
+        <p class="text-muted mb-6 sm:mb-8 max-w-2xl mx-auto sm:mx-0 leading-relaxed">A chronological summary. For full context, the LinkedIn profile is the most current source. The resume is a 1-pager you can drop into an ATS.</p>
+        <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-3">
+          <a class="bg-primary text-primary-fg rounded px-5 py-3 sm:py-2.5 text-sm font-medium hover:opacity-90 cursor-pointer inline-flex items-center justify-center gap-1.5">LinkedIn <span class="text-xs opacity-80">&#x2197;</span></a>
+          <a class="bg-surface border border-border rounded px-5 py-3 sm:py-2.5 text-sm font-medium hover:border-accent hover:text-accent cursor-pointer inline-flex items-center justify-center gap-1.5">Download Resume <span class="text-xs text-muted">PDF, 1pg</span></a>
+          <span class="text-xs text-muted sm:ml-3 font-mono mt-1 sm:mt-0">Last updated 2026-04</span>
+        </div>
+      </section>
+
+      <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-12 sm:pb-20">
+        <ol class="divide-y divide-border border-t border-border">
+          <li class="py-7 grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-2 sm:gap-6">
+            <p class="font-mono text-xs text-muted sm:pt-1">2024 &mdash; now</p>
+            <div>
+              <div class="flex items-center gap-3 mb-2.5">
+                <span class="logo-tile w-11 h-11 rounded flex items-center justify-center text-base font-bold shrink-0">D</span>
+                <h3 class="font-semibold">Databricks <span class="text-muted font-normal">&middot; Senior Product Manager, Data Products</span></h3>
+              </div>
+              <p class="text-sm text-muted leading-relaxed">Lead PM for the data ingestion surface. Shipped X across Y customers; cut time-to-first-table from 30 min to 4 min.</p>
+              <p class="text-sm mt-2.5"><span class="bg-surface border border-border rounded px-2 py-0.5 text-xs font-medium uppercase tracking-wider">Outcome</span> <span class="text-muted ml-1">2.5x increase in weekly active ingest users in 2 quarters.</span></p>
+            </div>
+          </li>
+          <li class="py-7 grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-2 sm:gap-6">
+            <p class="font-mono text-xs text-muted sm:pt-1">2022 &mdash; 2024</p>
+            <div>
+              <div class="flex items-center gap-3 mb-2.5">
+                <span class="logo-tile w-11 h-11 rounded flex items-center justify-center text-base font-bold shrink-0">W</span>
+                <h3 class="font-semibold">Wherobots <span class="text-muted font-normal">&middot; Product Manager (founding)</span></h3>
+              </div>
+              <p class="text-sm text-muted leading-relaxed">Founding PM at a geospatial-AI startup. Led 0&rarr;1 on the spatial query engine.</p>
+              <p class="text-sm mt-2.5"><span class="bg-surface border border-border rounded px-2 py-0.5 text-xs font-medium uppercase tracking-wider">Outcome</span> <span class="text-muted ml-1">Took initial product to GA with 12 design partners; closed Series A.</span></p>
+            </div>
+          </li>
+          <li class="py-7 grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-2 sm:gap-6">
+            <p class="font-mono text-xs text-muted sm:pt-1">2021 &mdash; 2022</p>
+            <div>
+              <div class="flex items-center gap-3 mb-2.5">
+                <span class="logo-tile w-11 h-11 rounded flex items-center justify-center text-base font-bold shrink-0">T</span>
+                <h3 class="font-semibold">Tailscale <span class="text-muted font-normal">&middot; Product Manager, Identity</span></h3>
+              </div>
+              <p class="text-sm text-muted leading-relaxed">Owned the identity / access surface. Shipped SSO for enterprise customers and the user-management overhaul.</p>
+              <p class="text-sm mt-2.5"><span class="bg-surface border border-border rounded px-2 py-0.5 text-xs font-medium uppercase tracking-wider">Outcome</span> <span class="text-muted ml-1">+45% enterprise activation in the first quarter post-launch.</span></p>
+            </div>
+          </li>
+          <li class="py-7 grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-2 sm:gap-6">
+            <p class="font-mono text-xs text-muted sm:pt-1">2018 &mdash; 2021</p>
+            <div>
+              <div class="flex items-center gap-3 mb-2.5">
+                <span class="logo-tile w-11 h-11 rounded flex items-center justify-center text-base font-bold shrink-0">M</span>
+                <h3 class="font-semibold">Meta <span class="text-muted font-normal">&middot; Product Manager, Growth</span></h3>
+              </div>
+              <p class="text-sm text-muted leading-relaxed">Growth PM on a consumer surface. Drove a multi-quarter retention initiative; partnered with data science on causal-inference frameworks.</p>
+              <p class="text-sm mt-2.5"><span class="bg-surface border border-border rounded px-2 py-0.5 text-xs font-medium uppercase tracking-wider">Outcome</span> <span class="text-muted ml-1">+8% D30 retention on a surface with hundreds of millions of weekly users.</span></p>
+            </div>
+          </li>
+          <li class="py-7 grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-2 sm:gap-6">
+            <p class="font-mono text-xs text-muted sm:pt-1">2014 &mdash; 2018</p>
+            <div>
+              <div class="flex items-center gap-3 mb-2.5">
+                <span class="logo-tile w-11 h-11 rounded flex items-center justify-center text-base font-bold shrink-0">M</span>
+                <h3 class="font-semibold">Microsoft <span class="text-muted font-normal">&middot; Program Manager, Azure</span></h3>
+              </div>
+              <p class="text-sm text-muted leading-relaxed">PM on Azure&rsquo;s data platform. Shipped two major releases; ran the cross-team release council.</p>
+              <p class="text-sm mt-2.5"><span class="bg-surface border border-border rounded px-2 py-0.5 text-xs font-medium uppercase tracking-wider">Outcome</span> <span class="text-muted ml-1">Customer NSAT improved from neutral to top-quartile across the org.</span></p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PAGE: Blog (index)                                           -->
+    <!-- ============================================================ -->
+    <div data-page="blog" hidden>
+
+      <section class="max-w-5xl mx-auto px-4 sm:px-6 pt-10 sm:pt-20 pb-6 sm:pb-10 text-center sm:text-left">
+        <p class="text-xs uppercase tracking-[0.2em] text-muted mb-3">Blog</p>
+        <h1 class="display text-3xl sm:text-4xl font-semibold leading-tight sm:leading-[1.1] mb-4">Notes on building, measuring, and shipping things that matter.</h1>
+        <p class="text-muted mb-6 sm:mb-8 max-w-2xl mx-auto sm:mx-0 leading-relaxed">Mostly product management, applied AI, data, and growth &mdash; written for builders, not executives. Click a tag to filter.</p>
+
+        <div class="flex flex-wrap justify-center sm:justify-start gap-2.5">
+          <a class="tag-active px-3 py-1 rounded-full border text-sm cursor-pointer">All <span class="opacity-70 text-xs ml-1">(8)</span></a>
+          <a class="px-3 py-1 rounded-full border border-border text-sm bg-surface hover:border-accent hover:text-accent cursor-pointer">PM <span class="text-muted text-xs ml-1">(4)</span></a>
+          <a class="px-3 py-1 rounded-full border border-border text-sm bg-surface hover:border-accent hover:text-accent cursor-pointer">Data <span class="text-muted text-xs ml-1">(3)</span></a>
+          <a class="px-3 py-1 rounded-full border border-border text-sm bg-surface hover:border-accent hover:text-accent cursor-pointer">AI <span class="text-muted text-xs ml-1">(2)</span></a>
+          <a class="px-3 py-1 rounded-full border border-border text-sm bg-surface hover:border-accent hover:text-accent cursor-pointer">Growth <span class="text-muted text-xs ml-1">(2)</span></a>
+          <a class="px-3 py-1 rounded-full border border-border text-sm bg-surface hover:border-accent hover:text-accent cursor-pointer">Org design <span class="text-muted text-xs ml-1">(1)</span></a>
+        </div>
+      </section>
+
+      <section class="max-w-5xl mx-auto px-4 sm:px-6 pb-12 sm:pb-20">
+        <ul class="divide-y divide-border border-t border-border">
+          <li class="py-7 grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-2 sm:gap-6 group cursor-pointer"><a href="#/blog/post" class="contents">
+            <p class="font-mono text-xs text-muted sm:pt-1.5">2026-02-11</p>
+            <div>
+              <h3 class="display text-2xl font-semibold mb-2 group-hover:text-accent transition">Good metric, bad metric</h3>
+              <p class="text-sm text-muted leading-relaxed mb-3 max-w-2xl">A short field guide to picking metrics that actually move product decisions, not just dashboards. Three questions I ask before adopting any new metric, and the patterns that consistently fail.</p>
+              <div class="flex items-center gap-3 text-xs text-muted">
+                <span>5 min read</span><span>&middot;</span><span>PM</span><span>Data</span>
+              </div>
+            </div>
+          </a></li>
+          <li class="py-7 grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-2 sm:gap-6 group cursor-pointer"><a href="#/blog/post" class="contents">
+            <p class="font-mono text-xs text-muted sm:pt-1.5">2026-01-22</p>
+            <div>
+              <h3 class="display text-2xl font-semibold mb-2 group-hover:text-accent transition">How not to use data 101</h3>
+              <p class="text-sm text-muted leading-relaxed mb-3 max-w-2xl">Common ways product teams misuse data — citing absolute numbers without baselines, conflating significance with importance, A/B-testing in markets too small to matter — and what to do instead.</p>
+              <div class="flex items-center gap-3 text-xs text-muted">
+                <span>7 min read</span><span>&middot;</span><span>Data</span><span>PM</span>
+              </div>
+            </div>
+          </a></li>
+          <li class="py-7 grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-2 sm:gap-6 group cursor-pointer"><a href="#/blog/post" class="contents">
+            <p class="font-mono text-xs text-muted sm:pt-1.5">2025-12-04</p>
+            <div>
+              <h3 class="display text-2xl font-semibold mb-2 group-hover:text-accent transition">When to build, when to buy: a PM&rsquo;s framework</h3>
+              <p class="text-sm text-muted leading-relaxed mb-3 max-w-2xl">Three questions I run through before every build-vs-buy call. Mostly designed to keep us from over-indexing on either side of the trade.</p>
+              <div class="flex items-center gap-3 text-xs text-muted">
+                <span>6 min read</span><span>&middot;</span><span>PM</span>
+              </div>
+            </div>
+          </a></li>
+        </ul>
+      </section>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- PAGE: Blog post                                              -->
+    <!-- ============================================================ -->
+    <div data-page="blog/post" hidden>
+
+      <article class="max-w-2xl mx-auto px-4 sm:px-6 pt-10 sm:pt-16 pb-12 sm:pb-20">
+        <p class="text-sm text-muted mb-8 sm:mb-10"><a href="#/blog" class="hover:text-accent cursor-pointer">&larr; All posts</a></p>
+
+        <div class="text-center sm:text-left mb-10 sm:mb-12 pb-6 border-b border-border">
+          <p class="text-xs uppercase tracking-[0.2em] text-muted mb-3">Essay</p>
+          <h1 class="display text-3xl sm:text-5xl font-semibold leading-tight sm:leading-[1.05] mb-5">Good metric, bad metric</h1>
+          <div class="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-1 text-sm text-muted">
+            <span class="font-mono">2026-02-11</span>
+            <span>&middot;</span>
+            <span>5 min read</span>
+            <span>&middot;</span>
+            <span>PM</span>
+            <span>Data</span>
+          </div>
+        </div>
+
+        <div class="post-body text-fg">
+          <p class="text-xl text-muted leading-relaxed mb-10">A short field guide to picking metrics that actually move product decisions, not just dashboards.</p>
+
+          <p>Every product team has a metrics problem, and almost none of them know it. The ones that do recognize it have usually graduated past the symptoms &mdash; the dashboards no one looks at, the OKRs that don&rsquo;t change behavior, the weekly reviews that become rituals &mdash; and started asking the harder question: <strong>which of these numbers, if it moved, would change what we decide to do tomorrow?</strong></p>
+
+          <p>That&rsquo;s the bar I want to set: a metric is only useful if it can plausibly change a decision. Everything else is decoration.</p>
+
+          <h2>The three questions</h2>
+          <p>Before I adopt any new metric &mdash; whether it&rsquo;s for an OKR, a dashboard, or a single experiment &mdash; I run it through three questions:</p>
+
+          <p><strong>Can I name the decision it informs?</strong> Not "improve user engagement," not "track health." A specific, near-term call I&rsquo;ll have to make.</p>
+
+          <p><strong>Is it directional, or is it absolute?</strong> "Active users" is absolute and almost always misleading. "Active users week-over-week, normalized for marketing spend" is directional.</p>
+
+          <p><strong>Could the metric move without the underlying thing actually moving?</strong> This is the goodhart trap. If your metric can be gamed by surface changes, then improvements to the metric will routinely come without the user actually being better off.</p>
+
+          <blockquote>The patterns that consistently fail, in my experience: vanity counters with no denominator, retention metrics measured on too short a window, and any metric that survives a re-org because nobody&rsquo;s sure what it means anymore.</blockquote>
+
+          <h2>What good looks like</h2>
+          <p>The teams I&rsquo;ve seen do this well share a few things. They have a small dashboard &mdash; usually fewer than ten metrics &mdash; and they review it religiously. They retire metrics aggressively when they stop being useful. And critically, they&rsquo;re willing to say "we don&rsquo;t measure that yet" instead of inventing a proxy and committing to it.</p>
+
+          <p>If you can&rsquo;t do all three, you don&rsquo;t have a metrics problem. <strong>You have a decision-making problem dressed up in numbers.</strong></p>
+        </div>
+
+        <div class="mt-16 sm:mt-20 pt-8 sm:pt-10 border-t border-border">
+          <h3 class="text-xs uppercase tracking-[0.2em] text-muted mb-5">Related</h3>
+          <ul class="space-y-3">
+            <li><a href="#/blog/post" class="block group cursor-pointer">
+              <span class="font-semibold group-hover:text-accent transition">How not to use data 101</span>
+              <span class="text-sm text-muted ml-2">&middot; common ways product teams misuse data</span>
+            </a></li>
+            <li><a href="#/blog/post" class="block group cursor-pointer">
+              <span class="font-semibold group-hover:text-accent transition">The North Star metric is overrated</span>
+              <span class="text-sm text-muted ml-2">&middot; why a small dashboard often beats one headline number</span>
+            </a></li>
+          </ul>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- Site footer (shared across pages) -->
+    <footer class="border-t border-border bg-surface">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10 flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4 sm:gap-0 text-sm text-muted">
+        <span>&copy; 2026 Pouyan Aminian</span>
+        <div class="flex gap-5 items-center">
+          <a class="icon-link hover:text-accent cursor-pointer" aria-label="GitHub" title="GitHub">
+            <svg viewBox="0 0 16 16" fill="currentColor" width="20" height="20"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          </a>
+          <a class="icon-link hover:text-accent cursor-pointer" aria-label="LinkedIn" title="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M19 0h-14c-2.76 0-5 2.24-5 5v14c0 2.76 2.24 5 5 5h14c2.76 0 5-2.24 5-5v-14c0-2.76-2.24-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.27c-.97 0-1.75-.79-1.75-1.76s.78-1.76 1.75-1.76 1.75.79 1.75 1.76-.78 1.76-1.75 1.76zm13.5 12.27h-3v-5.6c0-3.37-4-3.11-4 0v5.6h-3v-11h3v1.76c1.4-2.59 7-2.78 7 2.48v6.76z"/></svg>
+          </a>
+          <a class="icon-link hover:text-accent cursor-pointer" aria-label="X (Twitter)" title="X">
+            <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>
+          </a>
+          <a class="icon-link hover:text-accent cursor-pointer" aria-label="Email" title="Email">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <footer class="border-t border-border px-6 py-2 text-xs text-muted bg-surface shrink-0">
+    Generated by <code class="font-mono">design-prototypes</code> &middot; Cool &amp; Minimal v1
+  </footer>
+
+  <script>
+    (function () {
+      // Hash routing
+      function navSection(page) {
+        if (!page) return 'home';
+        if (page.indexOf('blog') === 0) return 'blog';
+        return page;
+      }
+      function showPage(name) {
+        var pages = document.querySelectorAll('[data-page]');
+        var found = false;
+        pages.forEach(function (el) {
+          var match = el.dataset.page === name;
+          el.hidden = !match;
+          if (match) found = true;
+        });
+        if (!found) {
+          document.querySelector('[data-page="home"]').hidden = false;
+          name = 'home';
+        }
+        var section = navSection(name);
+        document.querySelectorAll('[data-nav]').forEach(function (el) {
+          el.dataset.active = (el.dataset.nav === section) ? 'true' : 'false';
+        });
+        window.scrollTo(0, 0);
+      }
+      function handleHash() {
+        var hash = location.hash.replace(/^#\//, '');
+        showPage(hash || 'home');
+      }
+      window.addEventListener('hashchange', handleHash);
+      document.addEventListener('DOMContentLoaded', handleHash);
+      handleHash();
+
+      // Mobile drawer toggle
+      var navToggle = document.getElementById('nav-toggle');
+      var navClose = document.getElementById('nav-close');
+      var navDrawer = document.getElementById('nav-drawer');
+      function openDrawer() {
+        if (!navDrawer) return;
+        navDrawer.hidden = false;
+        if (navToggle) navToggle.setAttribute('aria-expanded', 'true');
+      }
+      function closeDrawer() {
+        if (!navDrawer) return;
+        navDrawer.hidden = true;
+        if (navToggle) navToggle.setAttribute('aria-expanded', 'false');
+      }
+      if (navToggle) navToggle.addEventListener('click', openDrawer);
+      if (navClose) navClose.addEventListener('click', closeDrawer);
+      // Close drawer when any link inside is tapped (so the user sees the destination)
+      document.querySelectorAll('[data-nav-drawer-link]').forEach(function (link) {
+        link.addEventListener('click', function () { setTimeout(closeDrawer, 0); });
+      });
+      // Esc closes the drawer
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && navDrawer && !navDrawer.hidden) closeDrawer();
+      });
+      // Close drawer on resize past md so we don't end up in a weird state
+      window.addEventListener('resize', function () {
+        if (window.innerWidth >= 768 && navDrawer && !navDrawer.hidden) closeDrawer();
+      });
+    })();
+  </script>
+</body>
+</html>

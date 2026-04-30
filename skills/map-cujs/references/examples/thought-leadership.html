@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CUJ: Thought Leadership</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <style type="text/tailwindcss">
+    /* @theme:start — keep in sync with prototype/tokens.css */
+    @theme {
+      /* Surfaces — subtle cool tint on bg, pure white on raised surfaces */
+      --color-bg: oklch(0.985 0.005 250);
+      --color-surface: oklch(1 0 0);
+    
+      /* Text */
+      --color-fg: oklch(0.18 0.02 260);
+      --color-muted: oklch(0.5 0.02 260);
+    
+      /* Lines */
+      --color-border: oklch(0.92 0.008 260);
+    
+      /* Accent / interactive — deep blue primary, brighter accent for highlights */
+      --color-primary: oklch(0.38 0.16 260);
+      --color-primary-fg: oklch(0.99 0 0);
+      --color-accent: oklch(0.55 0.18 250);
+    
+      /* Typography */
+      --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --font-mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    
+      /* Radius — sharp 4px */
+      --radius: 0.25rem;
+    }
+    /* @theme:end */
+  </style>
+  <style>
+    html, body { height: 100%; }
+    body { display: flex; flex-direction: column; }
+  </style>
+</head>
+<body class="bg-bg text-fg font-sans antialiased">
+  <header class="border-b border-border px-6 py-3 flex items-center justify-between bg-surface text-sm shrink-0">
+    <div class="text-muted">
+      <a href="/" target="_top" class="hover:text-accent">&larr; Prototype</a>
+      <span class="mx-1.5">/</span>
+      <span>CUJs</span>
+      <span class="mx-1.5">/</span>
+      <span class="text-fg">Thought Leadership</span>
+    </div>
+    <div class="text-xs text-muted">Stage 3 &middot; happy path + failures + optimization</div>
+  </header>
+
+  <main class="flex-1 overflow-y-auto px-6 py-10">
+    <div class="max-w-3xl mx-auto">
+      <h1 class="text-3xl font-semibold mb-3 tracking-tight">Thought Leadership</h1>
+
+      <div class="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm bg-surface border border-border rounded-md p-4 mb-8">
+        <div class="text-muted font-medium">JTBDs</div>
+        <div>
+          <div>"I want to consume content from an experienced industry expert in his domain(s) of expertise" (industry peers, P1)</div>
+          <div>"I want to collect evidence that he is the right fit and is worth interviewing" (recruiters, P1) &mdash; secondary use</div>
+        </div>
+        <div class="text-muted font-medium">Personas</div>
+        <div>Industry peer looking for sharp thinking on PM, AI, Data, or Growth; <em>or</em> a recruiter wanting to assess depth of thought beyond a resume's bullet points.</div>
+        <div class="text-muted font-medium">Trigger</div>
+        <div>
+          <div><em>Peer:</em> wants to learn from someone with relevant experience; arrived via search, social share, or referral from another part of the site.</div>
+          <div><em>Recruiter:</em> wants to validate that Pouyan's writing matches the seniority claimed on the resume.</div>
+        </div>
+        <div class="text-muted font-medium">Outcome</div>
+        <div>User has read at least one substantive post and formed a more nuanced view of Pouyan's thinking quality &mdash; depth, clarity, originality, perspective.</div>
+      </div>
+
+      <h2 class="text-lg font-semibold mb-3">Happy path</h2>
+
+      <section class="mb-8 bg-surface border border-border rounded-md p-6 overflow-x-auto">
+        <pre class="mermaid">
+graph TD
+  Land([Land on /blog])
+  Scan[Skim list: titles, excerpts, tag chips inline]
+  Pick[Pick a post matching interest; optionally narrow via tag first]
+  Read[Read - depth, clarity, originality; opinion forms during reading]
+  EndPeer([Peer: opinion formed, may follow / share / return])
+  EndRecruiter([Recruiter: depth validated, evidence captured])
+
+  Land --> Scan
+  Scan --> Pick
+  Pick --> Read
+  Read --> EndPeer
+  Read --> EndRecruiter
+
+  classDef default fill:#f0f0f0,stroke:#999999,color:#1a1a1a
+  classDef happy fill:#d6e4f0,stroke:#7aafcf,color:#1a1a1a
+
+  class Land,EndPeer,EndRecruiter default
+  class Scan,Pick,Read happy
+        </pre>
+      </section>
+
+      <h2 class="text-lg font-semibold mb-3">Steps (job-oriented)</h2>
+      <ol class="list-decimal pl-6 space-y-2 text-sm leading-relaxed">
+        <li><strong>Land.</strong> User arrives at the blog index from the home nav, from the Discovery CUJ, or directly from a shared link.</li>
+        <li><strong>Skim list.</strong> Titles, short excerpts, and tag chips are visible together. The user is asking: "is anything here likely to teach me something?" If they have a specific topic in mind, they may click a tag chip to narrow the list (per FAQ Q6 resolved &mdash; tags are inline filter affordances, not a separate mode).</li>
+        <li><strong>Pick a post.</strong> The user picks based on which post seems most likely to deliver on their interest &mdash; a combination of title sharpness, excerpt clarity, and tag match. Tag-narrowing is part of this step, not a strategic pre-decision.</li>
+        <li><strong>Read and form an opinion.</strong> User engages with the post, looking for depth (does this go beyond table-stakes?), clarity (is the thinking well-structured?), and originality (does this say something they haven&rsquo;t already heard?). Opinion forms during reading. The exit varies:
+          <ul class="list-disc pl-6 mt-1 space-y-1">
+            <li><em>Peer:</em> may follow, subscribe (future), share, return for more, or move on.</li>
+            <li><em>Recruiter:</em> takes the depth signal back to their fit evaluation.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h2 class="text-lg font-semibold mb-3 mt-10">Failure modes</h2>
+      <p class="text-sm text-muted mb-4 leading-relaxed">Blog failures convert "interested peer" into "moving on" &mdash; or worse, give the visitor a low opinion of Pouyan&rsquo;s thinking quality. Three matter most.</p>
+
+      <section class="mb-6 bg-surface border border-border rounded-md p-6 overflow-x-auto">
+        <pre class="mermaid">
+graph TD
+  Land([Land on /blog])
+  Scan[Skim list and tag chips]
+  Pick[Pick a post]
+  Read[Read; opinion forms]
+  Done([Opinion formed])
+
+  EmptyTag[Tag chip click returns empty list]
+  Mismatch[Title promises X, post delivers Y]
+  Stale[Newest post is 6+ months old]
+
+  LowTrust([Loses trust in blog depth])
+  Bounce([Bounces mid-post; lower opinion])
+  Inactive([Concludes Pouyan stopped writing])
+
+  Land --> Scan
+  Scan --> Pick
+  Pick --> Read
+  Read --> Done
+
+  Scan -.->|filter via tag returns empty| EmptyTag
+  Pick -.->|expectation set wrong| Mismatch
+  Scan -.->|stale dates visible| Stale
+  EmptyTag --> LowTrust
+  Mismatch --> Bounce
+  Stale --> Inactive
+
+  classDef default fill:#f0f0f0,stroke:#999999,color:#1a1a1a
+  classDef happy fill:#d6e4f0,stroke:#7aafcf,color:#1a1a1a
+  classDef branch fill:#f0e0d6,stroke:#cf9a7a,color:#1a1a1a
+
+  class Land,Done,LowTrust,Bounce,Inactive default
+  class Scan,Pick,Read happy
+  class EmptyTag,Mismatch,Stale branch
+        </pre>
+      </section>
+
+      <ol class="list-decimal pl-6 space-y-3 text-sm leading-relaxed">
+        <li>
+          <strong>Empty tag filter.</strong>
+          <ul class="mt-1 space-y-1 text-muted">
+            <li><strong class="text-fg">Type:</strong> Functionality (primary) + UX (empty-state design)</li>
+            <li><strong class="text-fg">Addressed by:</strong> <code class="font-mono text-xs">implementation-brief</code> (only render tags with at least one post) + <code class="font-mono text-xs">design-wireframes</code> (empty-state with adjacent-tag suggestions)</li>
+            <li><strong class="text-fg">Trigger:</strong> user clicks a tag chip and lands on an empty post list.</li>
+            <li><strong class="text-fg">User experience:</strong> conclusion drawn in seconds: "the blog claims to cover this but doesn&rsquo;t" &mdash; lowers trust in the blog&rsquo;s depth and discourages further filtering.</li>
+            <li><strong class="text-fg">Recovery:</strong> only render tag chips for tags that have at least one post. If a deep-link to an empty tag exists (e.g., from a shared old URL), show suggested adjacent tags rather than an empty list.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Title or excerpt sets wrong expectation.</strong>
+          <ul class="mt-1 space-y-1 text-muted">
+            <li><strong class="text-fg">Type:</strong> Content</li>
+            <li><strong class="text-fg">Addressed by:</strong> editorial (pre-publish title-vs-content QA gate)</li>
+            <li><strong class="text-fg">Trigger:</strong> the post title sounds like one thing; the content delivers another. Common cause: cute titles that prioritize cleverness over clarity.</li>
+            <li><strong class="text-fg">User experience:</strong> reader skims, realizes the mismatch, bounces. Comes away with a lower opinion of the writer.</li>
+            <li><strong class="text-fg">Recovery:</strong> titles describe what the post actually delivers; excerpts preview a real takeaway from the post, not just the opening sentence.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Stale posting cadence.</strong>
+          <ul class="mt-1 space-y-1 text-muted">
+            <li><strong class="text-fg">Type:</strong> Content</li>
+            <li><strong class="text-fg">Addressed by:</strong> editorial (cadence schedule + evergreen curation when gaps occur)</li>
+            <li><strong class="text-fg">Trigger:</strong> newest visible post is 6+ months old.</li>
+            <li><strong class="text-fg">User experience:</strong> visitor concludes Pouyan stopped writing &mdash; and stops checking back. The conclusion sticks even after new posts get published.</li>
+            <li><strong class="text-fg">Recovery:</strong> dates visible on the index. If a real cadence gap exists, consider de-emphasizing dates and curating "evergreen" posts as the primary entry surface; revisit when posting resumes.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h2 class="text-lg font-semibold mb-3 mt-10">Optimization analysis</h2>
+
+      <h3 class="text-sm font-semibold mt-6 mb-2 text-muted uppercase tracking-wider">Flow summary</h3>
+      <p class="text-sm leading-relaxed mb-4">Linear browse-pick-read flow with one branch (filter by tag vs. scroll). All in-product; the only system-level failure is an empty tag filter.</p>
+
+      <h3 class="text-sm font-semibold mt-6 mb-2 text-muted uppercase tracking-wider">Facts</h3>
+      <div class="bg-surface border border-border rounded-md p-4 mb-4">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-border">
+              <th class="text-left py-2 font-medium">CUJ</th>
+              <th class="text-right py-2 font-medium">Happy path steps</th>
+              <th class="text-right py-2 font-medium">System errors</th>
+              <th class="text-right py-2 font-medium">Window switches</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-border/50">
+              <td class="py-2">Discovery</td>
+              <td class="text-right tabular-nums">5</td>
+              <td class="text-right tabular-nums">0</td>
+              <td class="text-right tabular-nums">0</td>
+            </tr>
+            <tr class="border-b border-border/50">
+              <td class="py-2">Work Experience</td>
+              <td class="text-right tabular-nums">7</td>
+              <td class="text-right tabular-nums">1</td>
+              <td class="text-right tabular-nums">1</td>
+            </tr>
+            <tr class="bg-border/10">
+              <td class="py-2 font-medium">Thought Leadership <span class="text-muted text-xs">(this CUJ)</span></td>
+              <td class="text-right tabular-nums">3</td>
+              <td class="text-right tabular-nums">1</td>
+              <td class="text-right tabular-nums">0</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="text-xs text-muted mt-3 leading-relaxed">Convention: happy-path step count = action (happy-classed) nodes on the success path. System errors = failures that produce a literal 404/500/broken-state (per Stage 2&apos;s Functionality-typed failures with actual error states). Window switches = points where the user must leave the product context.</p>
+      </div>
+
+      <h3 class="text-sm font-semibold mt-6 mb-2 text-muted uppercase tracking-wider">Findings</h3>
+      <ol class="list-decimal pl-6 space-y-3 text-sm leading-relaxed">
+        <li>
+          <strong>Filter / Browse split was over-modeled in the diagram.</strong> <span class="inline-block px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-medium">Resolved</span>
+          <ul class="mt-1 space-y-1 text-muted">
+            <li><strong class="text-fg">Type:</strong> UX (information architecture)</li>
+            <li><strong class="text-fg">Addressed by:</strong> Stage 1 happy path was simplified upstream &mdash; no longer a separate strategic decision. Tags now inline with the post list per FAQ Q6.</li>
+            <li><strong class="text-fg">Lens:</strong> Step count vs. JTBD complexity</li>
+            <li><strong class="text-fg">What changed:</strong> Removed the <code class="font-mono text-xs">Strategy</code> decision node and the <code class="font-mono text-xs">Filter</code> / <code class="font-mono text-xs">Browse</code> alternative paths. The happy path is now <code class="font-mono text-xs">Land &rarr; Scan &rarr; Pick &rarr; Read</code>; tag-narrowing is a sub-action inside Scan rather than a separate strategic step. Wireframe implication: tag chips inline with the post list.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>"Form opinion" was an outcome of Read, not a step.</strong> <span class="inline-block px-1.5 py-0.5 rounded bg-border/40 text-fg text-xs font-medium">Resolved</span>
+          <ul class="mt-1 space-y-1 text-muted">
+            <li><strong class="text-fg">Type:</strong> UX (flow modeling)</li>
+            <li><strong class="text-fg">Addressed by:</strong> Diagram cleanup applied upstream.</li>
+            <li><strong class="text-fg">Lens:</strong> Redundant steps</li>
+            <li><strong class="text-fg">What changed:</strong> Removed the standalone <code class="font-mono text-xs">Form</code> node. Read is now described as "Read; opinion forms" so the cognitive outcome is folded into the action where it actually happens.</li>
+          </ul>
+        </li>
+        <li>
+          <strong>Empty tag filter is a system dead end (cross-reference).</strong>
+          <ul class="mt-1 space-y-1 text-muted">
+            <li><strong class="text-fg">Type:</strong> Functionality + UX</li>
+            <li><strong class="text-fg">Addressed by:</strong> <code class="font-mono text-xs">implementation-brief</code> (only render tags with posts) + <code class="font-mono text-xs">design-wireframes</code> (empty-state suggestions). Already documented in Stage 2 failure modes.</li>
+            <li><strong class="text-fg">Lens:</strong> Dead ends</li>
+            <li><strong class="text-fg">Specific steps:</strong> Scan (where the user clicks a tag chip)</li>
+            <li><strong class="text-fg">Recommendation:</strong> No new recommendation &mdash; the Stage 2 entry covers this. Listed here so the optimization view is complete.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <h3 class="text-sm font-semibold mt-6 mb-2 text-muted uppercase tracking-wider">Optimization score</h3>
+      <p class="text-sm leading-relaxed mb-4"><span class="inline-block px-2 py-0.5 rounded bg-border/40 text-fg font-medium">Clean</span> &mdash; the two upstream findings have been applied. The remaining cross-reference (empty tag filter) is a documented Stage 2 concern, not a Stage 3 fix.</p>
+
+      <h2 class="text-lg font-semibold mb-3 mt-10">Notes from the PRD &amp; FAQ</h2>
+      <ul class="list-disc pl-6 space-y-1 text-sm text-muted leading-relaxed">
+        <li>Per FAQ Q6 resolved: tags are how posts are organized. Topics like PM/AI/Data/Growth are example tags rather than a fixed taxonomy. Wireframes should treat tags as filter affordances.</li>
+        <li>SEO is called out as &ldquo;super important&rdquo; in the PRD &mdash; affects post-page metadata and post-level URL structure but isn&rsquo;t a flow concern at this stage.</li>
+        <li>The PRD also lists this CUJ as serving the evidence-collection JTBD. That&rsquo;s a real but secondary use &mdash; recruiters who want depth-of-thought signal will land here, not just on /work.</li>
+      </ul>
+    </div>
+  </main>
+
+  <footer class="border-t border-border px-6 py-2 text-xs text-muted bg-surface shrink-0">
+    Generated by <code class="font-mono">map-cujs</code> &middot; Stage 1
+  </footer>
+
+  <script>mermaid.initialize({ startOnLoad: true, theme: 'neutral' });</script>
+</body>
+</html>

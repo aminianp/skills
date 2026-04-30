@@ -74,6 +74,43 @@ Common components extracted from a typical site prototype:
 
 Err on the side of extracting. It's cheaper to delete a component nobody uses than to leave duplicated markup that drifts.
 
+## Document States (Not Just Variants)
+
+Components have **variants** (visual flavors of the same component) and **states** (how the same variant responds to interaction or content lifecycle). Both should appear in the component file.
+
+- **Variants** answer "what kinds of this component exist?" &mdash; primary vs secondary button, clickable vs static pill.
+- **Interactive states** answer "how does the user know it can be tapped, what happens when they tap, what if they can't right now?" &mdash; default / hover / focus / active / disabled. Document on every interactive component.
+- **Dynamic states** answer "what if the data hasn't arrived yet?" &mdash; loading / empty / error / partial. Document on components that wrap async content (lists, search results, forms with server validation).
+
+For the full taxonomy plus anti-patterns, see [component-states.md](references/component-states.md). Reserve State sections for components where the state actually changes the rendering &mdash; a static logo tile doesn't need a Disabled state.
+
+## Default to Modern Patterns
+
+Don't reinvent 2010 defaults. Components should reach for current practice unless there's a reason to deviate:
+
+- Pills are `rounded-full`, not square
+- Active/selected states use a soft tint (`color-mix(fg 8%, transparent)`), not solid black
+- Touch targets are ≥ 44px on mobile (`py-3`)
+- Social links are SVG icons, not text labels
+- Buttons in groups stack vertically full-width below sm
+- Use `:focus-visible` rings on every interactive element
+
+The full reference is [modern-web-defaults.md](references/modern-web-defaults.md). Skim it before writing the first component on a project; deviate only when the brand explicitly requires it.
+
+## Accessibility Floor
+
+Every component must clear a baseline:
+
+- **Icon-only buttons need `aria-label`** describing the action ("Open menu", not "menu icon"). Without this, screen readers announce them as "button" with no context.
+- **Decorative SVGs get `aria-hidden="true"`** so they don't get spoken redundantly when they're inside a labeled button.
+- **Meaningful images need `alt` text**; decorative ones get `alt=""` (don't omit the attribute).
+- **Don't convey state with color alone** &mdash; pair color with text, icon, or border weight.
+- **`:focus-visible` ring** on every interactive component, with sufficient contrast against the background.
+- **Keyboard tab order matches visual order.** No `tabindex` other than `0` or `-1` (positive `tabindex` is an anti-pattern).
+- **Disclosure widgets** (drawers, dropdowns, accordions) need `aria-expanded`, `aria-controls`, and consistent open/close state.
+
+Document the accessibility contract for each component near its States section &mdash; what aria attributes it expects, what keyboard interactions it supports.
+
 ## Document Responsive Behavior (When It Changes)
 
 For web-target components whose layout **actually changes at a breakpoint** &mdash; a nav row that hides items below `sm`, a two-column grid that collapses to one, a hero that stacks vertically, a heading that scales down &mdash; add a `Responsive` section to the component page describing the change. Include the breakpoint, what shifts, and a code snippet showing the responsive class string.
@@ -171,17 +208,31 @@ The slug names the component, not its color/theme/variant. A theme change should
 
 Once the prototype has been approved, you don't need a second approval to extract components &mdash; approving the prototype implicitly approves what's in it. The user can chat with you to rename, merge, or split components after they exist; that's normal iteration, not gating.
 
-1. **Read `prototype/APPROVED`** to find the `prototype:` line. If missing, ask the user which prototype is approved and offer to write the manifest line.
+1. **Read `prototype/APPROVED`** to find the `prototype:` line. If missing, ask the user which prototype is approved and offer to write the manifest line via `bump_approval.py`.
 2. **Read the approved prototype** and identify every reused pattern using the bar above (used more than once = component).
 3. **Cross-reference other prototypes** in `prototype/hi-fi/` to find additional usages of each pattern &mdash; this powers the "Used in" backlinks. Skip variants that intentionally diverge (e.g., a "different theme" variant) when collecting backlinks; the component reflects the *approved* shape.
-4. **Write each component** to `prototype/components/<slug>.html` following the structure above. Use semantic theme classes (`bg-bg`, `text-fg`, `border-border`) not raw Tailwind colors. Keep `@theme:start` / `@theme:end` markers so theme changes propagate.
+4. **Write each component** to `prototype/components/<slug>.html`, starting from the bundled template at [`references/component-page-template.html`](references/component-page-template.html). Fill in Variants, States (where applicable), Dynamic states (where applicable), Responsive (where applicable), Tokens, and Used-in backlinks. Use semantic theme classes (`bg-bg`, `text-fg`, `border-border`) not raw Tailwind colors. Keep `@theme:start` / `@theme:end` markers so theme changes propagate.
 5. **Run `prototype-update`** to refresh the launcher's Components list:
 
    ```bash
    python3 ~/.claude/skills/prototype-update/scripts/regenerate.py prototype/
    ```
 
-6. **Report back.** List the components written with one-line descriptions, and flag anything ambiguous (e.g., "two patterns looked similar but I extracted them separately because their structure differs &mdash; merge if you'd rather"). Iteration after the fact is expected.
+6. **Mark components aligned** in the manifest:
+
+   ```bash
+   python3 ~/.claude/skills/prototype-update/scripts/bump_approval.py prototype/ components aligned
+   ```
+
+   See [Approval Protocol](../prototype-update/references/approval-protocol.md).
+
+7. **Report back.** List the components written with one-line descriptions, and flag anything ambiguous (e.g., "two patterns looked similar but I extracted them separately because their structure differs &mdash; merge if you'd rather"). Iteration after the fact is expected.
+
+## Pipeline
+
+- **Reads from**: the approved prototype (`prototype:` in APPROVED); cross-references other prototypes in `hi-fi/` for backlinks
+- **Produces**: component HTML files in `prototype/components/`
+- **Feeds out to**: `implementation-brief` (which references components by filename so engineering reuses one shared definition)
 
 ## Keeping Components in Sync With the Prototype
 
@@ -211,8 +262,20 @@ When done, tell the user:
 
 - The list of components written (with one-line description each).
 - Patterns that didn't cluster, with a brief reason ("only one usage; not promoted to a component").
-- Whether `prototype/APPROVED` already existed or you wrote it for them.
-- Whether you ran `prototype-update` (you should have).
+- Whether `prototype/APPROVED` already existed or you wrote the `prototype:` line for them.
+- Whether you ran `prototype-update` (you should have) and `bump_approval.py components aligned` (you should have).
 - A reminder: when `implementation-brief` is run next, it should reference these components by filename so engineering reuses one shared definition.
 
 If the user wants to iterate on the component set after seeing the result &mdash; rename, merge, split, drop &mdash; treat that as a normal next conversation. The library is meant to be edited, not frozen.
+
+## Worked examples
+
+Bundled in `references/examples/`, copied from pouyan.fyi after this skill ran on it:
+
+- `button.html` &mdash; primary + secondary, with/without trailing icon. Includes a Responsive section showing the full-width-stacked-on-mobile pattern.
+- `tag-pill.html` &mdash; static / inactive / active / hover variants. Demonstrates the soft-tint active state.
+- `site-nav.html` &mdash; sticky top nav composed of nav-link + icon-link. Includes the hamburger drawer pattern in its Responsive section.
+- `post-list-item.html` &mdash; compact / full / related variants. Demonstrates the grid-collapse-to-single-column responsive pattern.
+- `page-intro.html` &mdash; eyebrow + h1 + lede; standard / blog-post / hero variants. Demonstrates the type-scale-on-mobile pattern.
+
+These are the canonical "what good looks like" for a content-led web component library. Use them as reference when extracting from a similar project.

@@ -132,20 +132,63 @@ The script reads `prototype/tokens.css`, extracts the `@theme` block, walks ever
 
 After propagation, a browser refresh is sufficient. Tell them: "Refresh the prototype tab(s) to see the new theme." Don't run `prototype-update` — that regenerates the launcher's HTML structure, which hasn't changed (and the regenerator pulls from `tokens.css` itself, so it stays in sync independently).
 
-### Step 7 — Mark the theme/style approved (when the user signs off)
+### Step 7 — Accessibility floor (do this before declaring the theme done)
 
-When the user commits to the theme ("let's go with this", "ship it", "I'm happy with this theme") &mdash; not just iterating ("warmer", "softer corners") &mdash; update the project's approval manifest at `prototype/APPROVED` with two related lines:
+Before locking in a theme, sanity-check the contrast ratios against WCAG AA. The minimums:
 
+- **4.5:1** for body text (any text under ~18px / under ~14px bold)
+- **3:1** for large text (≥18px regular, ≥14px bold) and meaningful UI elements (icons, focus rings)
+- **AAA targets** are 7:1 / 4.5:1 if you want to overshoot
+
+Pairings to check at minimum:
+
+| Pair | Used for | Min ratio |
+|---|---|---|
+| `--color-fg` on `--color-bg` | body text | 4.5:1 |
+| `--color-muted` on `--color-bg` | secondary / metadata | 4.5:1 (often the failure point) |
+| `--color-primary-fg` on `--color-primary` | primary button label | 4.5:1 |
+| `--color-accent` on `--color-bg` | links, focus rings | 3:1 (these are large/UI) |
+| `--color-accent` on `--color-surface` | accent inside cards | 3:1 |
+
+For a quick check, paste the OKLCH values into [contrast-ratio.com](https://contrast-ratio.com/) or [WebAIM contrast checker](https://webaim.org/resources/contrastchecker/) (both accept hex; the former accepts CSS color functions including OKLCH directly). If the muted color fails 4.5:1, bump its lightness toward the foreground (a common miss is making `muted` too low-contrast for "secondary" text that's actually body copy).
+
+Don't ship a theme that fails AA on body text. Other failures are findings to discuss with the user.
+
+### Step 8 — Mark the theme/style approved (when the user signs off)
+
+When the user commits to the theme ("let's go with this", "ship it") &mdash; not just iterating ("warmer", "softer corners") &mdash; call the approval script with both keys:
+
+```bash
+python3 ~/.claude/skills/prototype-update/scripts/bump_approval.py prototype/ theme tokens.css
+python3 ~/.claude/skills/prototype-update/scripts/bump_approval.py prototype/ styles styles/<chosen-preset>.html
 ```
-theme: tokens.css
-styles: styles/<chosen-preset>.html
+
+`theme:` is the active tokens file. `styles:` points at the *style preview page* the user picked from the comparison set in `prototype/styles/`. If you generated only one style preview, still write `styles:` for that file. If the user skipped style previews and went straight to a tokens.css edit, set only `theme:`.
+
+Run `prototype-update` afterward. See [Approval Protocol](../prototype-update/references/approval-protocol.md). If the user is mid-iteration, do *not* update the manifest &mdash; approval marks a decision, not work-in-progress.
+
+## Pipeline
+
+- **Reads from**: user's taste signals (constraints / references / adjectives / dials)
+- **Produces**: `prototype/tokens.css` (the @theme block); 1-3 style preview pages in `prototype/styles/`
+- **Feeds out to**: every prototype HTML via inline `@theme` markers (propagated by `apply_theme.py`); `design-wireframes`, `design-prototypes`, `design-components` all consume the tokens
+
+## Iteration
+
+This skill is iteration-friendly by design. Re-run on requests like "warmer", "softer corners", "tighter contrast", "swap accent to green" &mdash; read the existing `tokens.css`, apply the change, rewrite. Always show the user a short diff or summary of what changed.
+
+When iterating, do *not* update the approval manifest &mdash; iteration is work-in-progress. Only the explicit "ship it" commit triggers `bump_approval.py`.
+
+If the user later un-commits the theme ("let's reconsider"), drop the lines:
+
+```bash
+python3 ~/.claude/skills/prototype-update/scripts/bump_approval.py prototype/ theme
+python3 ~/.claude/skills/prototype-update/scripts/bump_approval.py prototype/ styles
 ```
 
-`theme:` is largely symbolic since `tokens.css` is always the active theme &mdash; recording it completes the manifest. `styles:` points at the *style preview page* the user picked from the comparison set in `prototype/styles/` (e.g., `styles/cool-minimal.html`). The launcher uses `styles:` to render a "✓ Selected" pill on the matching preview card and a green check next to the Styles sidebar item, so progress is visible at a glance.
+## Worked example
 
-If you generated only one style preview (no comparison set), still write the `styles:` line pointing at that file. If the user explicitly skipped style previews entirely and went straight to a tokens.css edit, set only `theme:` and skip `styles:`.
-
-Run `prototype-update` afterward. If the user is mid-iteration, do *not* update the manifest &mdash; approval marks a decision, not work-in-progress.
+`references/examples/cool-minimal-tokens.css` &mdash; the tokens.css produced for pouyan.fyi by this skill: cool-blue palette in OKLCH, Inter type stack, 0.25rem radius. Read it as a reference for a tight monochrome-with-color-accent theme.
 
 ## Iteration Mode
 

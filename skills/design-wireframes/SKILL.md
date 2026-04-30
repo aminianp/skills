@@ -150,15 +150,35 @@ Direct them to refresh the prototype tab to see the new wireframes listed, and r
 
 ### Step 7 — Mark wireframes aligned (once the user signs off)
 
-When the user signals the wireframes look right ("these flows look good", "let's move on to hi-fi"), update the project's approval manifest at `prototype/APPROVED`:
+When the user signals the wireframes look right ("these flows look good", "let's move on to hi-fi"), call the approval script:
 
+```bash
+python3 ~/.claude/skills/prototype-update/scripts/bump_approval.py prototype/ wireframes aligned
 ```
-wireframes: aligned
+
+Wireframes are typically aligned as a set rather than individually &mdash; they're then superseded by the HiFi prototype. Run `prototype-update` afterward. See [Approval Protocol](../prototype-update/references/approval-protocol.md).
+
+## Pipeline
+
+- **Reads from**: aligned CUJs from `map-cujs` (in `prototype/cujs/`); active theme from `prototype/tokens.css`; render `target:` from APPROVED
+- **Produces**: per-screen wireframe HTML files in `prototype/wireframes/`
+- **Feeds out to**: `design-prototypes` (which consolidates the wireframes into a single navigable interactive prototype)
+
+## Iteration
+
+Wireframes are draft layouts and are expected to iterate. If the user asks for substantial changes (new screens, restructured flow), drop the alignment line until they sign off again:
+
+```bash
+python3 ~/.claude/skills/prototype-update/scripts/bump_approval.py prototype/ wireframes
 ```
 
-This is a group-level marker since wireframes are typically aligned as a set rather than individually &mdash; they're then superseded by the HiFi prototype. The launcher renders a small green check next to the Wireframes sidebar item so progress is visible at a glance. Run `prototype-update` afterward.
+Minor in-place edits to a single wireframe (a tightening pass, copy change) don't require unmarking.
 
-If the user later asks for substantial wireframe changes (new screens, restructured flow), drop the line until they sign off again. Minor edits don't require unmarking.
+When CUJs change upstream, the wireframes for the affected flows are likely stale &mdash; re-run this skill on those CUJs to refresh.
+
+## Worked example
+
+`references/examples/blog-02-post.html` &mdash; the blog-post wireframe from pouyan.fyi. Single-column article layout with metadata header and related-posts footer; demonstrates the lofi blueprint style (real Tailwind, real type scale, placeholder-but-realistic content).
 
 ## Iteration on Existing Wireframes
 

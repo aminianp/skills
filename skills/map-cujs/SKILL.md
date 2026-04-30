@@ -172,14 +172,30 @@ For each CUJ:
 
 The Type + Addressed-by tags on Stage 3 findings serve the same purpose they do in Stage 2: convert "things that could be optimized" into "routable work for `design-wireframes` / `design-themes` / `implementation-brief` / editorial." Without them, optimization output becomes a list someone has to re-route by hand.
 
+## Pipeline
+
+- **Reads from**: an approved PRD with CUJs listed (typically `prd/site-prd.md`)
+- **Produces**: per-flow Mermaid diagrams + step-by-step text + JTBD anchor; failure-mode branches with Type + Addressed-by routing; optimization findings
+- **Feeds out to**: `design-wireframes` (each CUJ becomes per-screen wireframes); `design-prototypes` (consolidated into the interactive prototype)
+
 ## Marking CUJs Aligned
 
-Once the user has signed off on all three stages (happy paths, failure modes, optimization findings) for every CUJ, update the project's approval manifest at `prototype/APPROVED`:
+Once the user has signed off on all three stages (happy paths, failure modes, optimization), call the approval script:
 
+```bash
+python3 ~/.claude/skills/prototype-update/scripts/bump_approval.py prototype/ cujs aligned
 ```
-cujs: aligned
+
+CUJs are typically aligned as a unit, so the value is the literal `aligned` group marker rather than a file path. Then run `prototype-update` to refresh the launcher. See [Approval Protocol](../prototype-update/references/approval-protocol.md).
+
+## Iteration
+
+If the user revises the CUJs later (adds a flow, changes a happy path, identifies a new failure mode), drop the alignment line until they sign off again:
+
+```bash
+python3 ~/.claude/skills/prototype-update/scripts/bump_approval.py prototype/ cujs
 ```
 
-This is a group-level marker (not a path) since CUJs are typically aligned as a unit rather than individually. The launcher renders a small green check next to the CUJs section header so the user can see at a glance that the stage is done. After updating, run `prototype-update` to refresh the launcher.
+Re-running this skill on revised CUJs is normal &mdash; pick up at the stage that changed (Stage 2 if you're adding new failure modes; Stage 3 if you've changed the happy path and want fresh optimization findings). Don't redo earlier stages if they're still accurate.
 
-If the user revises the CUJs later (adds a new flow, changes a happy path), drop the line until they sign off again &mdash; the manifest reflects current state.
+When the PRD changes upstream (new CUJ added, an existing one removed), the CUJ flows here are likely stale. Re-run starting from Stage 1 for the affected flows; leave unchanged flows alone.

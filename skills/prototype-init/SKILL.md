@@ -66,6 +66,23 @@ Every HTML file inlines its own copy of the `@theme` block between `/* @theme:st
 
 This is configured per item in `SIDEBAR_SECTIONS` in `regenerate.py`.
 
+## Pipeline
+
+- **Reads from**: nothing &mdash; this is the entry point of the toolchain
+- **Produces**: scaffolded `prototype/` directory tree, empty APPROVED manifest, default tokens.css, frame templates, design-guidelines reference, and a placeholder launcher
+- **Feeds out to**: every other prototype skill consumes this scaffold
+
+## Iteration
+
+This skill is run **once per project**. If the user wants to start over, ask whether to delete + re-scaffold or keep the existing artifacts.
+
+The scaffold is intentionally generic. Per-project customization happens by:
+- `design-themes` rewriting `tokens.css`
+- `prd-crit` and `map-cujs` filling in the artifact subdirectories
+- The user editing `APPROVED` (via `bump_approval.py`) to set `target:` and approval state
+
+Don't re-run this skill to "refresh" the scaffold; that risks overwriting the user's work. If the launcher template needs updating, edit `regenerate.py` and re-run that.
+
 ## Steps
 
 ### 1. Check for existing scaffold
