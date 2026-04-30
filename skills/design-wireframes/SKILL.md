@@ -117,20 +117,22 @@ python3 ~/.claude/skills/prototype-update/scripts/regenerate.py prototype/
 
 ### Step 5a — Web targets must be responsive
 
-If `target:` is `web-spa` (default) or any web target, the wireframe **must** work at mobile, tablet, and desktop widths. This is non-negotiable. Most web traffic is mobile; a desktop-only prototype hides the hardest layout problems until production.
+If `target:` is `web-spa` (default) or any web target, the wireframe **must** work at mobile, tablet, and desktop widths. This is non-negotiable. Most web traffic is mobile; a desktop-only wireframe hides the hardest layout problems until production. "Responsive" doesn't mean "the desktop layout shrinks gracefully" &mdash; it means the layout fundamentally restructures so each form factor reads naturally.
 
-Use Tailwind's responsive prefixes (`sm:` 640px, `md:` 768px, `lg:` 1024px, `xl:` 1280px). Default styles describe the *mobile* layout; responsive prefixes upgrade for larger screens. Common patterns:
+Wireframes are lower-fidelity than prototypes, but the responsive structure still has to be correct &mdash; engineering uses the wireframe to know where things stack, where buttons go full-width, where the nav collapses to a hamburger.
 
-- **Container padding**: `class="max-w-5xl mx-auto px-4 sm:px-6"` &mdash; tighter on phones.
-- **Section padding**: `class="py-10 sm:py-20"` &mdash; halve vertical rhythm on mobile.
-- **Hero stacks vertically**: `class="flex flex-col sm:flex-row gap-6 sm:gap-12"`.
-- **Heading sizes**: `class="text-3xl sm:text-5xl leading-tight sm:leading-[1.05]"` &mdash; mobile gets a smaller, looser-leading version.
-- **Two-column lists collapse**: `class="grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-1 sm:gap-6"` &mdash; date on its own line above the title on mobile.
-- **Secondary nav items hide**: `class="hidden sm:flex"` on social-icon rows etc., so primary nav stays uncluttered on phones.
-- **Footers stack**: `class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-0"`.
-- **Buttons wrap**: `class="flex flex-wrap gap-3"` so CTAs don't overflow when the viewport narrows.
+For the full responsive checklist (touch targets, hamburger drawer, button stacking, hero centering, validation widths, anti-patterns), see the matching section in `design-prototypes` &mdash; the rules are identical at the wireframe and prototype stages. The short version:
 
-Validate by resizing the browser to ~390px wide (iPhone) and ~768px (iPad). If anything overflows, crashes, or stacks awkwardly, fix it before declaring the wireframe done.
+- **Touch targets &ge; 44px** (use `py-3` for buttons on mobile)
+- **Hamburger drawer below md** for any nav with 3+ items + secondary actions
+- **Primary CTA groups stack vertically and full-width below sm** with `flex flex-col sm:flex-row gap-3` and `text-center` on each button
+- **Hero centers on mobile** (`items-center sm:items-start`, `text-center sm:text-left`)
+- **Multi-column lists collapse** (`grid grid-cols-1 sm:grid-cols-[7rem_1fr]`)
+- **Footer stacks vertically** below sm
+- **Container padding tightens** (`px-4 sm:px-6`); section padding halves (`py-10 sm:py-20`)
+- **Headings shrink with looser leading** on mobile
+
+Validate at 320px / 390px / 768px / 1024px / 1440px. No horizontal scroll anywhere. Test the hamburger drawer opens and closes cleanly.
 
 For non-web targets (phone-ios, watch, etc.), the frame template handles "what device shape is this" &mdash; you don't need responsive prefixes on the inner content because it's rendering inside a fixed-width device frame.
 

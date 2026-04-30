@@ -108,24 +108,134 @@ Each prototype HTML follows this shape:
 
 ## Web Targets Must Be Responsive
 
-If `target:` is `web-spa` (default) or any web target, the prototype **must** work at mobile, tablet, and desktop widths &mdash; not as an afterthought, as the default. Most web traffic is mobile; a desktop-only prototype masks layout problems until production.
+If `target:` is `web-spa` (default) or any web target, the prototype **must** work at mobile, tablet, and desktop widths &mdash; not as an afterthought, as the default. Most web traffic is mobile; a desktop-only prototype masks layout problems until production. "Responsive" doesn't mean "the desktop layout shrinks gracefully" &mdash; it means the layout fundamentally restructures so each form factor reads naturally.
 
-Use Tailwind's responsive prefixes (`sm:` 640px, `md:` 768px, `lg:` 1024px, `xl:` 1280px). Default classes describe the **mobile** layout; responsive prefixes upgrade it for larger screens. The patterns that recur on every project:
+Use Tailwind's responsive prefixes mobile-first: default classes describe the **phone** layout, and `sm:` (640px), `md:` (768px), `lg:` (1024px), `xl:` (1280px) prefixes layer on the larger-screen versions.
 
-- Container padding tightens on phones: `class="px-4 sm:px-6"`
-- Section vertical padding halves on phones: `class="py-10 sm:py-20"`
-- Heroes stack: `class="flex flex-col sm:flex-row gap-6 sm:gap-12 items-start"` with the photo / illustration shrinking too (`w-24 h-24 sm:w-40 sm:h-40`)
-- Headings shrink: `class="text-3xl sm:text-5xl leading-tight sm:leading-[1.05]"`
-- Two-column lists collapse: `class="grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-1 sm:gap-6"`
-- Secondary nav (social icons, separators) hide below sm: `class="hidden sm:flex"`
-- Footers stack: `class="flex flex-col sm:flex-row gap-4 sm:gap-0"`
-- Buttons wrap: `class="flex flex-wrap gap-3"`
+### The non-negotiable patterns
 
-Validate by resizing the browser to ~390px (iPhone) and ~768px (iPad). If anything overflows, crashes, or stacks awkwardly, fix it before calling the prototype done.
+These are the patterns every web prototype needs. If the prototype skips any of them, it isn't responsive &mdash; it's a desktop layout pretending to be one.
 
-When components encapsulate responsive behavior, document it explicitly in the component file (see `design-components` for the convention) so engineering doesn't have to re-derive the breakpoints.
+**1. Touch targets &ge; 44px on mobile.** Apple HIG specifies 44pt; Material specifies 48dp. Buttons get `py-3` (~48px tall) on mobile, may compress to `py-2.5` on desktop where pointer precision is finer. Tap-target areas need at least 8px between siblings to avoid mis-taps.
 
-For non-web targets (phone-ios, watch, terminal, etc.), the frame template owns the device-shape concern; the inner content renders inside a fixed-width device frame and doesn't need responsive prefixes.
+**2. Hamburger drawer for nav with 3+ items + secondary actions.** Inline nav doesn't fit on phone. Below `md` (768px), hide the inline nav and show a hamburger button. Tapping it opens a **full-screen drawer overlay** containing the same nav items at large, tappable sizes. This is the canonical pattern (Material, iOS Mail, Slack, every modern site). Don't use a dropdown &mdash; drawers cover the whole viewport so every link is reachable with one thumb. Drawer template:
+
+```html
+<!-- In the nav, alongside the logo: -->
+<button id="nav-toggle" class="md:hidden -mr-2 p-2"
+        aria-label="Open menu" aria-expanded="false" aria-controls="nav-drawer">
+  <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
+       stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <line x1="3" y1="7" x2="19" y2="7"/>
+    <line x1="3" y1="11" x2="19" y2="11"/>
+    <line x1="3" y1="15" x2="19" y2="15"/>
+  </svg>
+</button>
+<div class="hidden md:flex items-center gap-7 text-sm">
+  <!-- inline nav for desktop -->
+</div>
+
+<!-- After the nav, at the same level: -->
+<div id="nav-drawer" class="md:hidden fixed inset-0 z-30 bg-bg flex flex-col" hidden>
+  <div class="border-b border-border px-4 py-3 flex items-center justify-between shrink-0">
+    <a href="#/home" data-nav-drawer-link>brand</a>
+    <button id="nav-close" class="-mr-2 p-2" aria-label="Close menu">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <line x1="6" y1="6" x2="16" y2="16"/>
+        <line x1="16" y1="6" x2="6" y2="16"/>
+      </svg>
+    </button>
+  </div>
+  <nav class="flex-1 px-6 py-10 flex flex-col gap-1">
+    <a href="#/home" data-nav-drawer-link class="text-3xl font-semibold py-3">Home</a>
+    <!-- ... -->
+  </nav>
+  <!-- secondary actions (social icons, etc.) at the bottom -->
+</div>
+```
+
+JS contract: `#nav-toggle` opens (sets `aria-expanded`); `#nav-close` + Escape key + clicks on `[data-nav-drawer-link]` close; resize past 768px also closes (so users don't get stuck in a stale drawer state when rotating to landscape).
+
+**3. Stack primary CTAs vertically and full-width below sm.** Two adjacent buttons inline on phone either overflow, wrap their labels mid-word, or compress to unreadable widths. The fix: `flex-col sm:flex-row gap-3` with `text-center` on each button so the label stays centered when the button stretches:
+
+```html
+<div class="flex flex-col sm:flex-row gap-3">
+  <a class="bg-primary text-primary-fg rounded
+            px-5 py-3 sm:py-2.5 text-sm font-medium
+            hover:opacity-90 cursor-pointer text-center">
+    Primary CTA
+  </a>
+  <a class="bg-surface border border-border rounded
+            px-5 py-3 sm:py-2.5 text-sm font-medium
+            hover:border-accent hover:text-accent
+            cursor-pointer text-center">
+    Secondary CTA
+  </a>
+</div>
+```
+
+A single button on its own doesn't need full-width &mdash; the pattern is for **groups** of CTAs. Don't use `flex-wrap` as a substitute &mdash; it doesn't address the full-width or the touch-target issues.
+
+**4. Hero content centers on mobile, lays out side-by-side on desktop.** Photo / illustration on top, text below, everything `text-center` on phone. Switch to `sm:flex-row sm:items-start sm:text-left` for desktop. Keep `max-w-xl` etc. on description copy with `mx-auto sm:mx-0` so centered text doesn't run too long.
+
+```html
+<section class="max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-24">
+  <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 sm:gap-12">
+    <div class="photo shrink-0 w-24 h-24 sm:w-40 sm:h-40 ...">...</div>
+    <div class="flex-1 w-full text-center sm:text-left sm:pt-2">
+      <p class="text-xs uppercase tracking-[0.2em] text-muted mb-3">Eyebrow</p>
+      <h1 class="text-3xl sm:text-5xl font-semibold leading-tight sm:leading-[1.05] mb-4 sm:mb-6">
+        Big heading.
+      </h1>
+      <p class="text-base sm:text-lg text-muted leading-relaxed mb-6 sm:mb-8 max-w-xl mx-auto sm:mx-0">
+        Description.
+      </p>
+      <!-- stacked buttons (see pattern 3) -->
+    </div>
+  </div>
+</section>
+```
+
+**5. Multi-column lists collapse to single column.** `grid grid-cols-1 sm:grid-cols-[7rem_1fr] gap-1 sm:gap-6` &mdash; date/leading column stacks above title on phone, sits beside title on desktop.
+
+**6. Footer stacks vertically.** `flex flex-col sm:flex-row items-center sm:items-center justify-between gap-4 sm:gap-0` &mdash; copyright on top, social row on bottom on phone.
+
+**7. Container padding tightens on phone.** `px-4 sm:px-6` everywhere. Section vertical padding roughly halves: `py-10 sm:py-20` etc.
+
+**8. Headings scale down with looser leading on phone.** `text-3xl sm:text-5xl` with `leading-tight sm:leading-[1.05]`. Tight leading at large desktop sizes is elegant; at mobile sizes it crashes wrapped lines into each other.
+
+### Validation widths
+
+Test the prototype at every transition point before calling it done:
+
+- **320px** &mdash; smallest still-supported phone (iPhone SE 1st gen, very old Android). Verify no horizontal scroll, no overflow.
+- **390px** &mdash; modern iPhone (15, 16). Primary mobile use case. Hamburger drawer should open and close cleanly.
+- **640px** &mdash; the `sm` breakpoint. Layout should switch from stacked to side-by-side.
+- **768px** &mdash; the `md` breakpoint. Hamburger should disappear; full inline nav appears.
+- **1024px** &mdash; laptop minimum. Desktop layout fully expressed.
+- **1440px** &mdash; common design canvas. Verify no awkward whitespace.
+
+In a desktop browser, drag the window narrow to roughly each width. The DevTools device toolbar is the right tool for the phone widths.
+
+### Anti-patterns (don't do these)
+
+- **Hiding important nav items at small sizes** without providing them in a drawer. Loses entry points.
+- **Hover-only interactions** &mdash; mobile has no hover. Important affordances need to be visible without hover (use persistent state or `:focus-visible`).
+- **Body text below 16px on mobile.** Triggers iOS Safari to auto-zoom on input focus, kills readability.
+- **Tap targets under 44px.** Causes mis-taps and rage-quits.
+- **Buttons that wrap their label to a second line.** Use full-width-stacked instead.
+- **Photo/illustration that dominates above the fold on mobile.** Shrink to ~25-30% of viewport height; the text needs to be visible without scrolling.
+- **Horizontal scroll.** Anywhere. Test at 320px.
+- **Approximating responsive design with media-query font-size tweaks alone.** Layouts must restructure, not just shrink.
+
+### When components encapsulate responsive behavior
+
+Document it explicitly in the component's HTML file (see `design-components` for the convention) so engineering doesn't re-derive the breakpoints when translating to production code. Components that don't change at any breakpoint deliberately skip the Responsive section &mdash; padding it onto everything is noise.
+
+### Non-web targets
+
+For `target: phone-ios`, `watch`, `terminal`, etc., the **frame template** owns the device-shape concern. The inner content renders inside a fixed-width device frame and doesn't need responsive prefixes &mdash; you're laying it out for one specific viewport size. Anchor to the vendor's HIG (see Design References) for what that viewport's idiomatic layout is.
 
 ## Render Target
 
